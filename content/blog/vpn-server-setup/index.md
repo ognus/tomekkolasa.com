@@ -1,3 +1,15 @@
+---
+title:  "How to quickly setup a VPN server on AWS"
+date:   2020-03-04 21:26:12 +0900
+---
+
+I think the quickest way is actually just get a marketplace image on AWS, but it comes with cost or restrictions.
+
+
+https://dev.to/yashints/let-s-setup-a-vpn-server-for-free-on-aws-under-5-min-1mg4
+
+https://medium.com/hackernoon/using-a-vpn-server-to-connect-to-your-aws-vpc-for-just-the-cost-of-an-ec2-nano-instance-3c81269c71c2
+
 # How to quickly setup a VPN server
 
 We will use OpenVPN server.
@@ -24,7 +36,9 @@ At this point you're pretty much done if you're only after a basic setup. The in
 ## 3. Get the config file
 
 ## 4. Additonal: add user password authentication
-
-
+https://openvpn.net/community-resources/using-alternative-authentication-methods/
 
 ## 5. Additonal: add routing to other subnets
+https://openvpn.net/community-resources/setting-up-routing/
+
+https://openvpn.net/vpn-server-resources/how-to-add-users-to-your-openvpn-access-server-using-pam/

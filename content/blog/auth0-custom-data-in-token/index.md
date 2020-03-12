@@ -1,3 +1,8 @@
+---
+title:  "Auth0"
+date:   2020-03-04 21:26:12 +0900
+---
+
 # How to add custom data to Auth0 JWT tokens
 
 Auth0 is a great tool for streamlining common authentication and authorisation flows.

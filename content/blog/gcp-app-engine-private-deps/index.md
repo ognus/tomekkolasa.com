@@ -1,4 +1,10 @@
-# How to deploy NodeJS app with private dependencies to Google App Engine
+---
+title:  "How to deploy NodeJS app with private dependencies to Google App Engine"
+date:   2020-03-04 21:26:12 +0900
+toc: true
+toc_label: "Table of Contents"
+description: ""
+---
 
 Google App Engine (GAE) is a nice and simple way to deploy your project. You can usually get up and running pretty quickly by using standard NodeJS runtime, which won't need much of configuration thanks to reasonable defaults. However, if your project has a private repository specified as dependency in the `package.json` file, then the standard setup won't work and we'll get an error when trying to deploy it:
 
@@ -184,7 +190,7 @@ You can get the `PROJECT_NUMBER` from the Cloud Console UI or by running `gcloud
 
 We'll use the following Dockerfile to build the image that the App Engine can run.
 
-```Dockerfile
+```dockerfile
 # Extending App Engine's NodeJS image
 FROM gcr.io/google_appengine/nodejs
 
