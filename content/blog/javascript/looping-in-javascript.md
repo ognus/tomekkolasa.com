@@ -1,0 +1,4 @@
+- Object.keys()
+- Object.entries()
+- for in
+- looping through promises and async await, for in vs Promise.all 

@@ -1,0 +1,4 @@
+- starbucks
+- mcdonald
+- public library
+- AWS

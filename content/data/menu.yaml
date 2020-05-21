@@ -1,0 +1,8 @@
+- value: Blog
+  slug: /blog
+
+- value: About
+  slug: /about
+
+- value: Contact
+  slug: /contact

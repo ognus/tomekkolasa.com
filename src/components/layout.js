@@ -1,70 +1,36 @@
+import styled from "@emotion/styled"
+import { Global } from "@emotion/core"
+
 import React from "react"
-import { Link } from "gatsby"
+import { Header } from "./header"
+import { global } from "../styles/global"
+import { theme } from "../theme"
 
-import { rhythm, scale } from "../utils/typography"
+const Root = styled.div`
+  margin: 0 auto;
+`
 
-const Layout = ({ location, title, children }) => {
-  const rootPath = `${__PATH_PREFIX__}/`
-  let header
+const Main = styled.main`
+  margin: 0 auto;
+  padding: 1rem;
+  max-width: ${theme.sizes.contentWidth};
+`
 
-  if (location.pathname === rootPath) {
-    header = (
-      <h1
-        style={{
-          ...scale(1.5),
-          marginBottom: rhythm(1.5),
-          marginTop: 0,
-        }}
-      >
-        <Link
-          style={{
-            boxShadow: `none`,
-            textDecoration: `none`,
-            color: `inherit`,
-          }}
-          to={`/`}
-        >
-          {title}
-        </Link>
-      </h1>
-    )
-  } else {
-    header = (
-      <h3
-        style={{
-          marginTop: 0,
-        }}
-      >
-        <Link
-          style={{
-            boxShadow: `none`,
-            textDecoration: `none`,
-            color: `inherit`,
-          }}
-          to={`/`}
-        >
-          {title}
-        </Link>
-      </h3>
-    )
-  }
+const Layout = ({ location, children }) => {
+  const ROOT_PATH = `${__PATH_PREFIX__}/`
+  const titleTag = location.pathname === ROOT_PATH ? "h1" : "p"
+
   return (
-    <div
-      style={{
-        marginLeft: `auto`,
-        marginRight: `auto`,
-        maxWidth: rhythm(24),
-        padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
-      }}
-    >
-      <header>{header}</header>
-      <main>{children}</main>
+    <Root>
+      <Global styles={global} />
+      <Header titleAs={titleTag} />
+      <Main>{children}</Main>
       <footer>
         © {new Date().getFullYear()}, Built with
         {` `}
         <a href="https://www.gatsbyjs.org">Gatsby</a>
       </footer>
-    </div>
+    </Root>
   )
 }
 

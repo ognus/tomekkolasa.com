@@ -1,0 +1,5 @@
+- no comute
+- less meetings
+- less distraction
+- async development
+- achieve more (## Pay yourself first)

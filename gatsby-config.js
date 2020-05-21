@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `Tomek's Blog`,
+    title: `Tomek Kolasa`,
     author: {
       name: `Tomek Kolasa`,
       summary: `who is a developer.`,
@@ -24,6 +24,12 @@ module.exports = {
       options: {
         path: `${__dirname}/content/assets`,
         name: `assets`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/data`,
       },
     },
     {
@@ -54,6 +60,24 @@ module.exports = {
         ],
       },
     },
+    {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        rule: {
+          include: /\.inline\.svg$/,
+        },
+      },
+    },
+    {
+      resolve: "gatsby-plugin-use-dark-mode",
+      options: {
+        classNameDark: "dark",
+        classNameLight: "light",
+        storageKey: "darkMode",
+        minify: true,
+      },
+    },
+    `gatsby-transformer-yaml`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
@@ -76,12 +100,6 @@ module.exports = {
       },
     },
     `gatsby-plugin-react-helmet`,
-    {
-      resolve: `gatsby-plugin-typography`,
-      options: {
-        pathToConfigModule: `src/utils/typography`,
-      },
-    },
     `gatsby-plugin-emotion`,
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
