@@ -1,7 +1,6 @@
 import { css } from "@emotion/core"
 import { cssVars, theme } from "../theme"
-import prismLight from "./prism-light"
-import prismDark from "./prism-dark"
+import { prism } from "./prism"
 
 export const global = css`
   html {
@@ -21,12 +20,10 @@ export const global = css`
 
   .dark {
     ${cssVars.dark}
-    ${prismDark}
   }
 
   .light {
     ${cssVars.light}
-    ${prismLight}
   }
 
   h1,
@@ -64,6 +61,10 @@ export const global = css`
     font-size: ${theme.fontSizes[0]};
   }
 
+  strong {
+    font-weight: ${theme.fontWeights.bold};
+  }
+
   p {
     margin: 1.75rem 0;
   }
@@ -78,8 +79,21 @@ export const global = css`
     }
   }
 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  td,
+  th {
+    padding: 0.5rem;
+    border-bottom: 1px solid ${theme.colors.text};
+  }
+
   .gatsby-highlight {
     margin-left: -3rem;
     margin-right: -3rem;
   }
+
+  ${prism};
 `

@@ -1,0 +1,1 @@
+From iterative to functional. And back.
