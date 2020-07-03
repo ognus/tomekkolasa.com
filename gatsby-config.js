@@ -6,7 +6,7 @@ module.exports = {
       summary: `who is a developer.`,
     },
     description: `A starter blog demonstrating what Gatsby can do.`,
-    siteUrl: `https://blog.tomekkolasa.com/`,
+    siteUrl: `https://tomekkolasa.com/`,
     social: {
       twitter: `ognus`,
     },
@@ -17,6 +17,13 @@ module.exports = {
       options: {
         path: `${__dirname}/content/blog`,
         name: `blog`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/drafts`,
+        name: `drafts`,
       },
     },
     {

@@ -2,14 +2,28 @@ import { css } from "@emotion/core"
 import { cssVars, theme } from "../theme"
 import { prism } from "./prism"
 
+export const wide = css`
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+
+  @media (min-width: ${theme.sizes.contentWidth}) {
+    margin-left: -2rem;
+    margin-right: -2rem;
+  }
+`
+
 export const global = css`
   html {
-    font-size: ${theme.baseSize};
+    font-size: ${theme.baseSize[0]};
     font-family: ${theme.fonts.body.join(",")};
     font-weight: ${theme.fontWeights.body};
     line-height: ${theme.lineHeights.body};
     text-rendering: optimizelegibility;
     -webkit-font-smoothing: antialiased;
+
+    @media (min-width: ${theme.sizes.contentWidth}) {
+      font-size: ${theme.baseSize[1]};
+    }
   }
 
   body {
@@ -33,32 +47,32 @@ export const global = css`
   h5 {
     font-family: ${theme.fonts.heading.join(",")};
     font-weight: ${theme.fontWeights.heading};
-    line-height: ${theme.lineHeights.heading};
-    margin: 2.75rem 0 1.05rem;
+    line-height: ${theme.lineHeights.heading[0]};
+    margin: 1.75em 0 0.5em;
   }
 
   h1 {
     font-size: ${theme.fontSizes[6]};
+    margin-top: 0.5em;
   }
 
   h2 {
     font-size: ${theme.fontSizes[5]};
+    line-height: ${theme.lineHeights.heading[1]};
   }
 
   h3 {
     font-size: ${theme.fontSizes[4]};
+    line-height: ${theme.lineHeights.heading[2]};
   }
 
   h4 {
     font-size: ${theme.fontSizes[3]};
+    line-height: ${theme.lineHeights.heading[3]};
   }
 
   h5 {
     font-size: ${theme.fontSizes[2]};
-  }
-
-  small {
-    font-size: ${theme.fontSizes[0]};
   }
 
   strong {
@@ -66,7 +80,14 @@ export const global = css`
   }
 
   p {
-    margin: 1.75rem 0;
+    margin: 1.5rem 0;
+  }
+
+  p,
+  ul,
+  ol,
+  div {
+    font-size: ${theme.baseSize[1]};
   }
 
   a {
@@ -82,17 +103,51 @@ export const global = css`
   table {
     width: 100%;
     border-collapse: collapse;
+
+    @media (max-width: ${theme.sizes.contentWidth}) {
+      display: block;
+
+      tr {
+        display: flex;
+        flex-wrap: wrap;
+
+        justify-content: space-between;
+      }
+
+      td {
+        display: block;
+
+        &:first-of-type {
+          width: 100%;
+        }
+      }
+
+      th:first-of-type {
+        display: none;
+      }
+    }
+  }
+
+  tr {
+    border-bottom: 1px solid var(--text);
   }
 
   td,
   th {
     padding: 0.5rem;
-    border-bottom: 1px solid ${theme.colors.text};
   }
 
   .gatsby-highlight {
-    margin-left: -3rem;
-    margin-right: -3rem;
+    ${wide};
+
+    pre[class*="language-"] {
+      padding: 1.5rem;
+      border-radius: 0;
+
+      @media (min-width: ${theme.sizes.contentWidth}) {
+        border-radius: 5px;
+      }
+    }
   }
 
   ${prism};

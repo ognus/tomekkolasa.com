@@ -1,11 +1,12 @@
 const COLORS = {
-  WHITE: "#FFFFFF",
+  WHITE: "#ffffff",
   BLACK: "#121212",
   PINK: "#ff1e9f",
   PINK_DIM: "#fbdaed",
   PURPLE: "#7b1fff",
   PURPLE_DIM: "#442e63",
-  GRAY_DARK: "#282936"
+  GRAY_DARK: "#282936",
+  GRAY_LIGHT: "#eeeeee"
 }
 
 const dark = toCSSVars({
@@ -15,6 +16,7 @@ const dark = toCSSVars({
   primary: COLORS.PINK,
   secondary: COLORS.PURPLE,
   secondaryDim: COLORS.PURPLE_DIM,
+  gray: COLORS.GRAY_DARK,
 })
 
 const light = toCSSVars({
@@ -24,13 +26,14 @@ const light = toCSSVars({
   primary: COLORS.PURPLE,
   secondary: COLORS.PINK,
   secondaryDim: COLORS.PINK_DIM,
+  gray: COLORS.GRAY_LIGHT,
 })
 
 export const theme = {
-  baseSize: "100%",
+  baseSize: ["12px", "16px"],
 
   sizes: {
-    pageWidth: "50rem",
+    pageWidth: "48rem",
     contentWidth: "44rem",
   },
 
@@ -65,7 +68,7 @@ export const theme = {
 
   lineHeights: {
     body: 1.5,
-    heading: 1.125,
+    heading: [1.125, 1.125, 1.3],
   },
 
   colors: {

@@ -4,7 +4,7 @@ import LogoSVG from "../../content/assets/logo.inline.svg"
 import { theme } from "../theme"
 
 const LogoImage = styled(LogoSVG)`
-  width: 3rem;
+  width: 4rem;
   margin-top: 2px;
 
   .text {

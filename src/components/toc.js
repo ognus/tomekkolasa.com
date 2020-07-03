@@ -14,12 +14,13 @@ function convertToOrderedLists(html) {
 
 const TableOfContents = styled.aside`
   border-left: 4px solid #f5f2f0;
-  padding-left: 2rem;
+  margin-bottom: 2rem;
+  padding-left: 1rem;
 
   ol {
     counter-reset: section;
     list-style-type: none;
-    padding-left: 2rem;
+    padding-left: 1rem;
   }
 
   li {

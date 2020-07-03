@@ -48,7 +48,7 @@ Turns out that a function is not the only value we can pass in the second argume
 const user = {
   email: "goku@capsule.corp",
   username: "kakarotto",
-  password: "kamehameha"
+  password: "kamehameha",
 };
 
 JSON.stringify(user, ["email", "username"]);
@@ -58,6 +58,12 @@ JSON.stringify(user, ["email", "username"]);
 ### toJSON()
 
 We can also customize the `JSON.stringify()` on per object basis. If an object contains a method `toJSON()`, it's return value will be converted to JSON string, instead of the whole object value.
+
+It's yet another way we can use to alter the way object properties are stringified or exclude unwanted properties. This time however, we can encapsulate this logic within our object if we like to.
+
+Let's have a look at the example.
+
+We create a `Credentials` instance which contains user's email and password. We implement a `toJSON` method to not include the password field in the JSON string, unless our user instance itself is a value of property named `data`. This could be useful when we send the user object as a body of a HTTP POST request. If we wrapped it with an object with property `data` if will contain much need `password` field.
 
 ```javascript
 class Credentials {
@@ -75,6 +81,8 @@ class Credentials {
   }
 }
 
+// Using class is just an example.
+// toJSON() will also work with object literal syntax as well
 const user = new Credentials("joe@user.com", "secret");
 
 JSON.stringify(user);
@@ -135,28 +143,24 @@ JSON.stringify(
 // { name }
 ```
 
-```
-> a = { a: { b: { c: {d: {e: 1}}}}}
-{ a: { b: { c: [Object] } } }
-> a
-{ a: { b: { c: [Object] } } }
-> console.log(e)
-Uncaught ReferenceError: e is not defined
-> console.log(a)
-{ a: { b: { c: [Object] } } }
-undefined
-> console.log(JSON.stringify(a, null, 2))
-{
-  "a": {
-    "b": {
-      "c": {
-        "d": {
-          "e": 1
-        }
-      }
-    }
-  }
-}
+```javascript
+const object = { a: { b: { c: { d: { e: 1 } } } } };
+
+console.log(object);
+// { a: { b: { c: [Object] } } }
+
+console.log(JSON.stringify(object, null, 2));
+// {
+//   "a": {
+//     "b": {
+//       "c": {
+//         "d": {
+//           "e": 1
+//         }
+//       }
+//     }
+//   }
+// }
 ```
 
 ### Local storage
@@ -176,7 +180,27 @@ JSON.parse(window.localStorage.getItem("user"));
 
 XMLHttpRequest
 
-In Node, you can use the build in `http` client, but in most cases we use external libraries that are much easier to use, like axios or node-fetch.
+```javascript
+const data = { email: "goku@capsule.corp", password: "kamehameha" };
+
+const xhr = new XMLHttpRequest();
+
+xhr.onload = () => {
+    // print JSON response
+    if (xhr.status >= 200 && xhr.status < 300) {
+        // parse JSON
+        const response = JSON.parse(xhr.responseText);
+        console.log(response);
+    }
+};
+
+// prepare and send the request
+xhr.open('POST', 'https://example.com/login');
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.send(JSON.stringify(json));
+
+
+```
 
 ```javascript
 const data = { email: "goku@capsule.corp", password: "kamehameha" };
@@ -190,9 +214,13 @@ const response = await fetch("https://example.com/login", {
 const { token } = await response.json();
 ```
 
+In Node, you can use the build in `http` client, but in most cases we use external libraries that are much easier to use, like axios or node-fetch.
+
+Most libraries will internally call JSON.stringify() and JSON.parse() for you. This is also the case with many Database clients like ps-node for PosgresSQL and mongodb for MongoDB. So you usually don't have to worry about it.
+
 ## Bad uses
 
-Not necesairly bad, but be careful with those use cases. 
+Not necesairly bad, but be careful with those use cases.
 
 ### Deep cloning
 

@@ -8,7 +8,7 @@ import { ThemeToggle } from "./theme-toggle"
 
 const StyledHeader = styled.header`
   background-color: ${theme.colors.foreground};
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
   box-shadow: 0 5px 20px -15px ${theme.colors.shadow};

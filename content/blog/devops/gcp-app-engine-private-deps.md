@@ -1,8 +1,6 @@
 ---
-title:  "How to deploy NodeJS app with private dependencies to Google App Engine"
-date:   2020-03-04 21:26:12 +0900
-toc: true
-toc_label: "Table of Contents"
+title: "How to deploy NodeJS app with private dependencies to Google App Engine"
+date: 2020-03-04 21:26:12 +0900
 description: ""
 ---
 
@@ -452,7 +450,7 @@ gcloud beta builds triggers create github \
 --build-config=[BUILD_CONFIG_FILE]
 ```
 
-
 ## Conclusion
+
 - solution (easy vs hard)
 - pricing ()

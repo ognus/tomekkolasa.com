@@ -1,25 +1,26 @@
-const path = require(`path`)
-const { createFilePath } = require(`gatsby-source-filesystem`)
+const path = require("path")
+const { createFilePath } = require("gatsby-source-filesystem")
+const { showDrafts } = require("./settings")
 
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions
 
-  const blogPost = path.resolve(`./src/templates/blog-post.js`)
+  const blogPost = path.resolve("./src/templates/blog-post.js")
   const result = await graphql(
     `
       {
         allMarkdownRemark(
+          filter: { fields: { visible: { eq: true } } }
           sort: { fields: [frontmatter___date], order: DESC }
           limit: 1000
         ) {
-          edges {
-            node {
-              fields {
-                slug
-              }
-              frontmatter {
-                title
-              }
+          nodes {
+            fields {
+              slug
+              draft
+            }
+            frontmatter {
+              title
             }
           }
         }
@@ -32,19 +33,16 @@ exports.createPages = async ({ graphql, actions }) => {
   }
 
   // Create blog posts pages.
-  const posts = result.data.allMarkdownRemark.edges
+  const posts = result.data.allMarkdownRemark.nodes
 
-  posts.forEach((post, index) => {
-    const previous = index === posts.length - 1 ? null : posts[index + 1].node
-    const next = index === 0 ? null : posts[index - 1].node
+  posts.forEach(post => {
+    const { slug } = post.fields
 
     createPage({
-      path: post.node.fields.slug,
+      path: slug,
       component: blogPost,
       context: {
-        slug: post.node.fields.slug,
-        previous,
-        next,
+        slug,
       },
     })
   })
@@ -53,12 +51,30 @@ exports.createPages = async ({ graphql, actions }) => {
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
 
-  if (node.internal.type === `MarkdownRemark`) {
-    const value = createFilePath({ node, getNode })
+  if (node.internal.type === "MarkdownRemark") {
+    const parent = getNode(node.parent)
+    const filePath = createFilePath({ node, getNode })
+    const isDraft = parent.sourceInstanceName === "drafts"
+    const isVisible = !isDraft || showDrafts
+
+    console.log({ isVisible, isDraft, showDrafts })
+
     createNodeField({
-      name: `slug`,
+      name: "slug",
+      value: path.basename(filePath),
       node,
-      value,
+    })
+
+    createNodeField({
+      name: "draft",
+      value: isDraft,
+      node,
+    })
+
+    createNodeField({
+      name: "visible",
+      value: isVisible,
+      node,
     })
   }
 }

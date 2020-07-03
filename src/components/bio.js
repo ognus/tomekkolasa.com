@@ -1,60 +1,51 @@
-import React from "react"
-import { useStaticQuery, graphql } from "gatsby"
+import styled from "@emotion/styled"
+import { graphql, useStaticQuery } from "gatsby"
 import Image from "gatsby-image"
+import React from "react"
+import { SocialLinks } from "./social-links"
 
-const Bio = () => {
-  const data = useStaticQuery(graphql`
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const Avatar = styled(Image)`
+  min-width: 70px;
+  border-radius: 100%;
+  margin-right: 1rem;
+`
+
+const DefaultContent = (
+  <>
+    Written by <strong>Tomek Kolasa</strong> &ndash; full-stack JavaScript,
+    Node.js and TypeScript.
+    <SocialLinks />
+  </>
+)
+
+export const Bio = ({ children = DefaultContent, className }) => {
+  const { avatar } = useStaticQuery(graphql`
     query BioQuery {
       avatar: file(absolutePath: { regex: "/profile-pic.jpg/" }) {
         childImageSharp {
-          fixed(width: 50, height: 50) {
+          fixed(width: 70, height: 70) {
             ...GatsbyImageSharpFixed
-          }
-        }
-      }
-      site {
-        siteMetadata {
-          author {
-            name
-            summary
-          }
-          social {
-            twitter
           }
         }
       }
     }
   `)
 
-  const { author, social } = data.site.siteMetadata
   return (
-    <div
-      style={{
-        display: `flex`
-      }}
-    >
-      <Image
-        fixed={data.avatar.childImageSharp.fixed}
-        alt={author.name}
-        style={{
-          marginRight: 0,
-          marginBottom: 0,
-          minWidth: 50,
-          borderRadius: `100%`,
-        }}
+    <Container className={className}>
+      <Avatar
+        fixed={avatar.childImageSharp.fixed}
+        alt="Tomek Kolasa"
         imgStyle={{
           borderRadius: `50%`,
         }}
       />
-      <p>
-        Written by <strong>{author.name}</strong> {author.summary}
-        {` `}
-        <a href={`https://twitter.com/${social.twitter}`}>
-          You should follow him on Twitter
-        </a>
-      </p>
-    </div>
+      <div>{children}</div>
+    </Container>
   )
 }
-
-export default Bio
