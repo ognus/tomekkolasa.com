@@ -19,7 +19,7 @@ const Content = styled.div`
 
 const Main = styled.main`
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
   max-width: ${theme.sizes.contentWidth};
 `
 

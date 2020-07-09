@@ -15,10 +15,9 @@ const Footer = styled.footer`
 
 const BlogPostTemplate = ({ data }) => {
   const post = data.markdownRemark
-  const siteTitle = data.site.siteMetadata.title
 
   return (
-    <Layout title={siteTitle}>
+    <Layout>
       <SEO
         title={post.frontmatter.title}
         description={post.frontmatter.description || post.excerpt}
@@ -45,11 +44,6 @@ export default BlogPostTemplate
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
-    site {
-      siteMetadata {
-        title
-      }
-    }
     markdownRemark(fields: { slug: { eq: $slug } }) {
       id
       excerpt(pruneLength: 160)

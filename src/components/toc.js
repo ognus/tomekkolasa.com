@@ -1,5 +1,4 @@
 import React from "react"
-import { theme } from "../theme"
 import styled from "@emotion/styled"
 
 /**
@@ -41,7 +40,9 @@ const TableOfContents = styled.aside`
     }
 
     li {
-      a { opacity: 0.8 }
+      a {
+        opacity: 0.8;
+      }
       &::before {
         width: 2.5rem;
       }

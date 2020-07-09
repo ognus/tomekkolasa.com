@@ -1,7 +1,7 @@
 import styled from "@emotion/styled"
-import { graphql, Link } from "gatsby"
+import { Link } from "gatsby"
 import React from "react"
-import { FaRegSadCry, FaArrowLeft } from "react-icons/fa"
+import { FaArrowLeft, FaRegSadCry } from "react-icons/fa"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { theme } from "../theme"
@@ -27,36 +27,22 @@ const BackLink = styled(Link)`
   }
 `
 
-const NotFoundPage = ({ data }) => {
-  const siteTitle = data.site.siteMetadata.title
+const NotFoundPage = () => (
+  <Layout>
+    <SEO title="404: Not Found" />
+    <Container>
+      <IconHeader>
+        4 <FaRegSadCry /> 4
+      </IconHeader>
 
-  return (
-    <Layout title={siteTitle}>
-      <SEO title="404: Not Found" />
-      <Container>
-        <IconHeader>
-          4 <FaRegSadCry /> 4
-        </IconHeader>
-
-        <div>
-          <h1>Not Found</h1>
-          <BackLink to="/">
-            <FaArrowLeft /> Home page
-          </BackLink>
-        </div>
-      </Container>
-    </Layout>
-  )
-}
+      <div>
+        <h1>Not Found</h1>
+        <BackLink to="/">
+          <FaArrowLeft /> Home page
+        </BackLink>
+      </div>
+    </Container>
+  </Layout>
+)
 
 export default NotFoundPage
-
-export const pageQuery = graphql`
-  query {
-    site {
-      siteMetadata {
-        title
-      }
-    }
-  }
-`

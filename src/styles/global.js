@@ -3,12 +3,12 @@ import { cssVars, theme } from "../theme"
 import { prism } from "./prism"
 
 export const wide = css`
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
+  margin-left: -2rem;
+  margin-right: -2rem;
 
   @media (min-width: ${theme.sizes.contentWidth}) {
-    margin-left: -2rem;
-    margin-right: -2rem;
+    margin-left: -2.5rem;
+    margin-right: -2.5rem;
   }
 `
 

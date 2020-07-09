@@ -12,11 +12,10 @@ const About = styled.article`
 `
 
 const BlogIndex = ({ data }) => {
-  const siteTitle = data.site.siteMetadata.title
   const posts = data.allMarkdownRemark.nodes
 
   return (
-    <Layout title={siteTitle}>
+    <Layout>
       <SEO title="Tomek Kolasa" />
 
       <About>
@@ -62,11 +61,6 @@ export default BlogIndex
 
 export const pageQuery = graphql`
   query {
-    site {
-      siteMetadata {
-        title
-      }
-    }
     allMarkdownRemark(
       filter: { fields: { visible: { eq: true } } }
       sort: { fields: [frontmatter___date], order: DESC }

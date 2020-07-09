@@ -8,7 +8,7 @@ import { wide } from "../styles/global"
 const PostLink = styled(Link)`
   ${wide}
   display: block;
-  padding: 2.5rem 1.5rem 0;
+  padding: 2.5rem 2rem 0;
   margin-top: 2.5rem;
   color: ${theme.colors.text};
   border-top: 1px solid ${theme.colors.gray};

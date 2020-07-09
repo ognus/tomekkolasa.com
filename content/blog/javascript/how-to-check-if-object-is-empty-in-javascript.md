@@ -1,10 +1,10 @@
 ---
-title: How to check if the object is empty in JavaScript
-toc: true
-toc_label: "Table of Contents"
+title: How to check if an object is empty in JavaScript
+description: Detailed explanation and comparison of different ways to check if an object is empty in JavaScript.
+date: 2020-07-10 11:00
 ---
 
-In programming there are many ways to solve a problem. Even something basic like checking if an array or object is empty. JavaScript is not an exception.
+In programming, there are many ways to solve a problem. Even something basic like checking if an array or object is empty. JavaScript is not an exception.
 
 Let’s have a look at some of the popular ways to check if the object is empty in JavaScript.
 
@@ -28,7 +28,7 @@ We could also use `Object.entries()` or `Object.values()` to achieve the same re
 
 `Object.entries()` on the other hand, returns an array of object's `[key, value]` pairs.
 
-For our use case here, the `Object.keys()` is the simplest choice. Furthermore, it seems to be faster then `Object.entries()` ([benchmark results](#Performance comparison)).
+For our use case here, the `Object.keys()` is the simplest choice. Furthermore, it seems to be faster then `Object.entries()` ([benchmark results](#performance-comparison)).
 
 ## Using Lodash
 
@@ -72,11 +72,11 @@ Yet, in most cases, it doesn't make a great deal of a difference. I wouldn't wor
 
 Lodash is very popular, and many libraries use it as a dependency. When you work in a team someone will include it sooner or later. Check it out if you haven't had the chance yet.
 
-## Using hasOwnProperty()
+## Using for-in loop
 
 ```javascript
 function isObjectEmpty(obj) {
-  for (var prop in obj) {
+  for (let prop in obj) {
     if (obj.hasOwnProperty(prop)) {
       return false;
     }
@@ -93,7 +93,7 @@ This is also a nice solution. The `isObjectEmpty` name makes the purpose of the 
 
 Moreover, the implementation is also easy to understand.
 
-We loop through all object properties (own and inherited) using a `for in` loop. On each iteration we call the object's `.hasOwnProperty()` method. We use it to check if the property actually belongs to this object and not to one of its ancestors. If it does we already know the object is not empty. So we can return `false`. In a case where the are no properties or none belongs to the object we return `true`.
+We loop through all object properties (own and inherited) using a `for-in` loop. On each iteration we call the object's `.hasOwnProperty()` method. We use it to check if the property actually belongs to this object and not to one of its ancestors. If it does we already know the object is not empty. So we can return `false`. In a case where the are no properties or none belongs to the object we return `true`.
 
 It's exactly how Lodash implements the `_.isEmpty` method. Or rather it's part that handles objects. Have a look at the [Lodash's source code](https://github.com/lodash/lodash/blob/4.17.15/lodash.js#L11495-L11500).
 
@@ -117,7 +117,7 @@ Why not use it though?
 
 - Converting an object to a string, just to check if it's empty, feels over-the-top.
 - It might yield unexpected results. By default `JSON.stringify()` ignores properties with the `undefined` or Symbol as a value.
-- It's slower than other methods. See the ([benchmark results](#Performance comparison)).
+- It's slower than other methods ([benchmark results](#performance-comparison)).
 
 Let have a look at example of unexpected result of the `JSON.stringify()` method:
 
@@ -141,7 +141,7 @@ Out test object contains one property of value `undefined`. It's not empty. Yet,
 const isMyObjectEmpty = jQuery.isEmptyObject(myObject);
 ```
 
-We don't talk that much about jQuery is recent years, but it's still a decent library. It's simple to learn and it's included by default in Wordpress.
+We don't talk that much about jQuery is recent years, but it's still a decent library. It's simple to learn and it's included by default in WordPress.
 
 It used to be very popular. I'm sure there are still many older websites that you might end up working on.
 
@@ -171,13 +171,15 @@ const isEmpty = map.size === 0;
 
 ## Performance comparison
 
-I have prepared a simple benchmark at [JSBench](https://jsbench.me/7xk9xur7cf/1) to compare the execution time of all the above ways of determining if an object is empty. The benchmark cheeks on empty and non-empty object on each itteration.
+Let's compare the execution times of all the above ways of determining if an object is empty.
 
-Let's have a look at the results when running the benchmark on the Chrome browser.
+I have prepared a simple benchmark at [JSBench](https://jsbench.me/7xk9xur7cf/1). It checks an empty and non-empty object on each iteration.
 
-The table provides a number of operations per second for each method, as well as its speed in relation to the fastest solution.
+Let's have a look at the results when running the benchmark on the Chrome and Firefox browsers.
 
-CHROME:
+The tables below show the benchmark results on the Chrome and Firefox browsers. They include a number of operations per second for each method and its speed in relation to the fastest solution.
+
+**CHROME (Version 83.0.4103.116 (Official Build) (64-bit)):**
 
 | Method                   |               Operations |        Result |
 | ------------------------ | -----------------------: | ------------: |
@@ -188,7 +190,9 @@ CHROME:
 | `Object.entries()`       |  4,831,865 ops/s ± 0.26% | 93.70% slower |
 | `JSON.stringify()`       |    214,802 ops/s ± 0.31% | 99.72% slower |
 
-FIREFOX:
+<br/>
+
+**FIREFOX (77.0.1 (64-bit)):**
 
 | Method                   |               Operations |        Result |
 | ------------------------ | -----------------------: | ------------: |
@@ -199,7 +203,7 @@ FIREFOX:
 | `Object.entries()`       |    812,136 ops/s ± 0.48% | 98.19% slower |
 | `JSON.stringify()`       |    231,561 ops/s ± 0.87% | 99.48% slower |
 
-SAFARI:
+<!-- SAFARI:
 
 | Method                   |                Operations |        Result |
 | ------------------------ | ------------------------: | ------------: |
@@ -219,16 +223,34 @@ EDGE:
 | `Object.keys()`          | 31,369,467 ops/s ± 0.77% | 59.88% slower |
 | `_.isEmpty()`            |  6,916,106 ops/s ± 0.53% | 91.15% slower |
 | `Object.entries()`       |  4,806,957 ops/s ± 0.40% | 93.85% slower |
-| `JSON.stringify()`       |    213,333 ops/s ± 0.29% | 99.73% slower |
+| `JSON.stringify()`       |    213,333 ops/s ± 0.29% | 99.73% slower | -->
 
-The `isObjectEmpty()`, our simple implementation using the `for in` loop is the fastest. But the `jQuery.isEmptyObject()` and the `Object.keys()` are not that much slower.
+I have also tried Edge and Safari browsers but the results were similar to the Chrome browser. So I didn't include them for clarity.
 
-I would expect that the solutions that use a simple for loop like the `jQuery.isEmptyObject()`, the `_.isEmpty()`, and our custom `isObjectEmpty()` would be the fastest. Mostly because, the loop can fi
+We can see that `JSON.stringify()` is significantly slower than other methods. If the object is not empty then it needs to be converted to a String in its entirety. This bigger the object the more time the conversion will take.
 
-Also it's iteresting to see that `Object.keys()` is faster then `Object.entries()`.
+Other than that, we can see that the methods using a `for-in` loop tend to perform better. Either the `jQuery.isEmptyObject()` method or our custom implementation `isObjectEmpty()` is the fastest. Lodash's `_.isEmpty()` also uses a `for-in` loop, but since it's a more generic solution (not only for objects), it does a bunch of extra checks. Which makes it a bit slower.
 
-This is definitely not a comprehensive comparison. The results might be different for other browsers, for one thing.
+So why the methods using `for-in` loop are the fastest?
 
-Not that it matters much in most everyday coding, but it's interesting to see how different ways of checking if an object is empty stand against each other in terms of raw speed.
+### For-in loop vs Object.keys() performance
 
-**That makes a clear winner overall for me.**
+Well... just like in real life, this is a bit complicated 😉
+
+But let's see if we can find something out. We will look into V8's internals a tiny bit to help us out. V8 is a JavaScript engine made by Google and used in Chrome and Node.js.
+
+Generally, I'd expect the `Object.keys()` to outperform `for-in` loop in most cases. The reason is that `for-in` loop iterates over all property names so it needs to do a lookup up the prototype chain. This is not that case for `Object.keys()`, which returns just an object's own properties.
+
+My guess is that the methods using the `for-in` loop are faster than `Object.keys()` because they have a constant time complexity of O(1). Whether an object is empty or not the loop will only run one iteration end exit immediately with `true` or `false`. This is not the case with other implementations. `Object.keys()` and `Object.entries()` will need to collect all the properties into an array.
+
+In reality, both the `Object.keys()` method and a `for-in` loop share a common logic in the V8 implementation. They use the `KeyAccumulator` class to handle the collection of object's keys. It's designed to deal with different internal representations of a Javascript object.
+
+Due to those complexities, looking through its source code is not the easiest. But some places like [this one](https://github.com/v8/v8/blob/8.6.58/src/objects/keys.cc#L551-L553) shed some light on why the `for-in` loop might be faster in some cases.
+
+In this case, the `for-in` loop doesn't need to copy the array and can use an internal array (`EnumCache`) to fetch the keys.
+
+Yet, the `for-in` based methods like our `isObjectEmpty()` are not always faster then the `Object.keys()` method.
+
+For example, removing a property from a test object using a `delete object.propertyName` makes the `for-in` methods slower. It forces V8 to choose a dictionary (Hash Map) for the object's properties representation. This results in slower lookups. At least when compared to the standard V8 optimizations like `HiddenClass` and in-object properties.
+
+If you'd like to learn more about how JavaScript Objects are implemented have a look at [V8 blog's post](https://v8.dev/blog/fast-properties). I also recommend a great post on the [for-in optimizations](https://v8.dev/blog/fast-for-in).

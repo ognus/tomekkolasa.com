@@ -57,8 +57,6 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     const isDraft = parent.sourceInstanceName === "drafts"
     const isVisible = !isDraft || showDrafts
 
-    console.log({ isVisible, isDraft, showDrafts })
-
     createNodeField({
       name: "slug",
       value: path.basename(filePath),
