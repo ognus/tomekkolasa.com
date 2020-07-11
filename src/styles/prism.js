@@ -237,7 +237,7 @@ export const prism = css`
 
   /* Inline code */
   :not(pre) > code[class*="language-"] {
-    padding: 4px 7px;
+    padding: 2px 5px;
     border-radius: 0.3em;
     white-space: normal;
   }

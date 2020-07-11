@@ -3,7 +3,8 @@ import { graphql } from "gatsby"
 import Image from "gatsby-image"
 import React from "react"
 import Layout from "../components/layout"
-import SEO from "../components/seo"
+import { SEO } from "../components/seo"
+import { PAGE_TYPES } from "../components/seo/schemas"
 import { theme } from "../theme"
 
 const Header = styled.header`
@@ -38,7 +39,7 @@ const ProfileText = styled.div`
 const AboutPage = ({ data: { profile } }) => {
   return (
     <Layout>
-      <SEO title="About" />
+      <SEO title="About" schemaOrgType={PAGE_TYPES.ABOUT} />
 
       <Header>
         <ProfileImage>
@@ -72,7 +73,7 @@ const AboutPage = ({ data: { profile } }) => {
       <h2>About the blog</h2>
       <p>
         This blog is a deep dive into a full-stack JavaScript ecosystem. Topics
-        ranging from frontend development through backend and finally DevOps. I
+        ranging from frontend development through the backend, and finally DevOps. I
         believe that familiarizing yourself with all aspects of software
         development will tremendously improve the outcomes of your work.
       </p>
@@ -96,7 +97,9 @@ const AboutPage = ({ data: { profile } }) => {
 
       <p>
         I do really hope you will find some of my articles useful or interesting
-        😀
+        <span role="img" aria-label="smile emoji">
+          😀
+        </span>
       </p>
 
       <p>So feel free to let me know what you need. I am here to help you.</p>

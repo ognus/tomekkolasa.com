@@ -4,7 +4,7 @@ import React from "react"
 import { Bio } from "../components/bio"
 import Layout from "../components/layout"
 import { Post } from "../components/post"
-import SEO from "../components/seo"
+import { SEO } from "../components/seo"
 import { SocialLinks } from "../components/social-links"
 
 const About = styled.article`
@@ -16,7 +16,7 @@ const BlogIndex = ({ data }) => {
 
   return (
     <Layout>
-      <SEO title="Tomek Kolasa" />
+      <SEO />
 
       <About>
         <header>
@@ -27,8 +27,9 @@ const BlogIndex = ({ data }) => {
         <p>I'm a Full-Stack Developer who lives in Tokyo.</p>
         <p>
           This blog is a deep dive into a full-stack JavaScript ecosystem. From
-          frontend to backend and DevOps. All the things I feel really
-          passionate about. <br />
+          frontend development through the backend, DevOps, and finally remote
+          work and productivity. All the things I feel really passionate about.
+          <br />
           <Link to="/about">Read more...</Link>
         </p>
         <p>Want to connect?</p>

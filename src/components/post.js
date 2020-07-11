@@ -58,9 +58,9 @@ export const Post = ({ title, description, slug, date, isDraft }) => {
       <PostLink to={slug}>
         <header>
           <h3>
-            {isDraft && <span>Draft</span>}
             <span className="link">{title}</span>
           </h3>
+          {isDraft && <strong>Draft </strong>}
           <small>{date}</small>
         </header>
         <section>

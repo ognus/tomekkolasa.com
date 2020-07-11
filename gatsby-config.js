@@ -1,11 +1,13 @@
+const description = `
+  This blog is a deep dive into a full-stack JavaScript ecosystem.
+  Topics ranging from frontend development through the backend, DevOps, and finally remote work and productivity.
+  I believe that familiarizing yourself with all aspects of software development will tremendously improve the outcomes of your work.
+`
+
 module.exports = {
   siteMetadata: {
-    title: `Tomek Kolasa`,
-    author: {
-      name: `Tomek Kolasa`,
-      summary: `who is a developer.`,
-    },
-    description: `A starter blog demonstrating what Gatsby can do.`,
+    title: `Tomek Kolasa | deep dive into a full-stack JavaScript`,
+    description: description.trim().replace(/\s+/, " "),
     siteUrl: `https://tomekkolasa.com/`,
     social: {
       twitter: `ognus`,
@@ -90,20 +92,20 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        //trackingId: `ADD YOUR TRACKING ID HERE`,
+        trackingId: `UA-134252917-1`,
       },
     },
     `gatsby-plugin-feed`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Gatsby Starter Blog`,
-        short_name: `GatsbyJS`,
+        name: `Tomek Kolasa`,
+        short_name: `Tomek Kolasa`,
         start_url: `/`,
         background_color: `#ffffff`,
-        theme_color: `#663399`,
+        theme_color: `#7b1fff`,
         display: `minimal-ui`,
-        icon: `content/assets/gatsby-icon.png`,
+        icon: `content/assets/logo.png`,
       },
     },
     `gatsby-plugin-react-helmet`,

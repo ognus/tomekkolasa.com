@@ -6,10 +6,10 @@ export const wide = css`
   margin-left: -2rem;
   margin-right: -2rem;
 
-  @media (min-width: ${theme.sizes.contentWidth}) {
+  /* @media (min-width: ${theme.sizes.contentWidth}) {
     margin-left: -2.5rem;
     margin-right: -2.5rem;
-  }
+  } */
 `
 
 export const global = css`
@@ -141,7 +141,7 @@ export const global = css`
     ${wide};
 
     pre[class*="language-"] {
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: 0;
 
       @media (min-width: ${theme.sizes.contentWidth}) {

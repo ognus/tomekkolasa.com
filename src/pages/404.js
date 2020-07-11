@@ -3,7 +3,7 @@ import { Link } from "gatsby"
 import React from "react"
 import { FaArrowLeft, FaRegSadCry } from "react-icons/fa"
 import Layout from "../components/layout"
-import SEO from "../components/seo"
+import { SEO } from "../components/seo"
 import { theme } from "../theme"
 
 const Container = styled.div`

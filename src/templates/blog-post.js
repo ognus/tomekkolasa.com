@@ -3,7 +3,8 @@ import { graphql } from "gatsby"
 import React from "react"
 import { Bio } from "../components/bio"
 import Layout from "../components/layout"
-import SEO from "../components/seo"
+import { SEO } from "../components/seo"
+import { PAGE_TYPES } from "../components/seo/schemas"
 import TOC from "../components/toc"
 import { theme } from "../theme"
 
@@ -21,6 +22,7 @@ const BlogPostTemplate = ({ data }) => {
       <SEO
         title={post.frontmatter.title}
         description={post.frontmatter.description || post.excerpt}
+        schemaOrgType={PAGE_TYPES.BLOG}
       />
       <article>
         <header>
