@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://tomekkolasa.com/">
-    tomekkolasa.com
+    <img alt="Tomek Kolasa" src="content/assets/logo-social.png" width="80" />
   </a>
 </p>
 <h1 align="center">

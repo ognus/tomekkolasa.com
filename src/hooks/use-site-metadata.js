@@ -1,5 +1,5 @@
 import { useStaticQuery, graphql } from "gatsby"
-import logo from "../../content/assets/logo.png"
+import logo from "../../content/assets/logo-social.png"
 
 export const useSiteMetadata = (pageSlug = "") => {
   const {

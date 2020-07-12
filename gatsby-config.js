@@ -6,7 +6,7 @@ const description = `
 
 module.exports = {
   siteMetadata: {
-    title: `Tomek Kolasa | deep dive into a full-stack JavaScript`,
+    title: `Tomek Kolasa | Deep dive into a full-stack JavaScript`,
     description: description.trim().replace(/\s+/, " "),
     siteUrl: `https://tomekkolasa.com/`,
     social: {
