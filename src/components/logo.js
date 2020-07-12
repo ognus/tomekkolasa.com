@@ -5,6 +5,7 @@ import { theme } from "../theme"
 
 const LogoImage = styled(LogoSVG)`
   width: 4rem;
+  height: 100%;
   margin-top: 2px;
 
   .text {
