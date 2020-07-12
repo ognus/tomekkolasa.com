@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { GiEvilMoon } from "react-icons/gi"
 import { MdWbSunny } from "react-icons/md"
 import Switch from "react-switch"
@@ -7,6 +7,7 @@ import useDarkMode from "use-dark-mode"
 
 const Container = styled.div`
   display: flex;
+  min-height: 28px;
 `
 
 const Icon = ({ icon: IconComponent }) => {
@@ -19,17 +20,25 @@ export const ThemeToggle = ({ className }) => {
     classNameLight: "light",
   })
 
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <Container className={className}>
-      <Switch
-        checked={darkMode.value}
-        onChange={darkMode.toggle}
-        onColor="#000"
-        offColor="#ffe81c"
-        offHandleColor="#000"
-        checkedIcon={<Icon icon={GiEvilMoon} />}
-        uncheckedIcon={<Icon icon={MdWbSunny} />}
-      />
+      {isClient && (
+        <Switch
+          checked={darkMode.value}
+          onChange={darkMode.toggle}
+          onColor="#000"
+          offColor="#ffe81c"
+          offHandleColor="#000"
+          checkedIcon={<Icon icon={GiEvilMoon} />}
+          uncheckedIcon={<Icon icon={MdWbSunny} />}
+        />
+      )}
     </Container>
   )
 }
