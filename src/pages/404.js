@@ -2,7 +2,6 @@ import styled from "@emotion/styled"
 import { Link } from "gatsby"
 import React from "react"
 import { FaArrowLeft, FaRegSadCry } from "react-icons/fa"
-import Layout from "../components/layout"
 import { SEO } from "../components/seo"
 import { theme } from "../theme"
 
@@ -28,7 +27,7 @@ const BackLink = styled(Link)`
 `
 
 const NotFoundPage = () => (
-  <Layout>
+  <>
     <SEO title="404: Not Found" />
     <Container>
       <IconHeader>
@@ -42,7 +41,7 @@ const NotFoundPage = () => (
         </BackLink>
       </div>
     </Container>
-  </Layout>
+  </>
 )
 
 export default NotFoundPage

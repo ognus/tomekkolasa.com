@@ -2,7 +2,6 @@ import styled from "@emotion/styled"
 import { graphql, Link } from "gatsby"
 import React from "react"
 import { Bio } from "../components/bio"
-import Layout from "../components/layout"
 import { Post } from "../components/post"
 import { SEO } from "../components/seo"
 import { SocialLinks } from "../components/social-links"
@@ -15,7 +14,7 @@ const BlogIndex = ({ data }) => {
   const posts = data.allMarkdownRemark.nodes
 
   return (
-    <Layout>
+    <>
       <SEO />
 
       <About>
@@ -54,7 +53,7 @@ const BlogIndex = ({ data }) => {
           />
         )
       })}
-    </Layout>
+    </>
   )
 }
 

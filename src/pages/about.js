@@ -2,7 +2,6 @@ import styled from "@emotion/styled"
 import { graphql } from "gatsby"
 import Image from "gatsby-image"
 import React from "react"
-import Layout from "../components/layout"
 import { SEO } from "../components/seo"
 import { PAGE_TYPES } from "../components/seo/schemas"
 import { theme } from "../theme"
@@ -38,7 +37,7 @@ const ProfileText = styled.div`
 
 const AboutPage = ({ data: { profile } }) => {
   return (
-    <Layout>
+    <>
       <SEO title="About" schemaOrgType={PAGE_TYPES.ABOUT} />
 
       <Header>
@@ -114,7 +113,7 @@ const AboutPage = ({ data: { profile } }) => {
         I would also like to improve my technical writing skills, and writing in
         general. I hope it will come easier once I get better at it.
       </p>
-    </Layout>
+    </>
   )
 }
 

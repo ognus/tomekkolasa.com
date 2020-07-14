@@ -2,7 +2,6 @@ import styled from "@emotion/styled"
 import { graphql } from "gatsby"
 import React from "react"
 import { Bio } from "../components/bio"
-import Layout from "../components/layout"
 import { SEO } from "../components/seo"
 import { PAGE_TYPES } from "../components/seo/schemas"
 import TOC from "../components/toc"
@@ -18,7 +17,7 @@ const BlogPostTemplate = ({ data }) => {
   const post = data.markdownRemark
 
   return (
-    <Layout>
+    <>
       <SEO
         title={post.frontmatter.title}
         description={post.frontmatter.description || post.excerpt}
@@ -38,7 +37,7 @@ const BlogPostTemplate = ({ data }) => {
           <Bio />
         </Footer>
       </article>
-    </Layout>
+    </>
   )
 }
 
@@ -50,7 +49,7 @@ export const pageQuery = graphql`
       id
       excerpt(pruneLength: 160)
       html
-      tableOfContents(maxDepth: 3)
+      tableOfContents(absolute: false, maxDepth: 3)
       frontmatter {
         title
         date(formatString: "MMMM DD, YYYY")
