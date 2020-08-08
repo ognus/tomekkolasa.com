@@ -7,6 +7,32 @@ export const wide = css`
   margin-right: -2rem;
 `
 
+export const blockquote = css`
+  margin-block-start: 1.5rem;
+  margin-block-end: 1.5rem;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-block-start: 0.5rem;
+  padding-block-end: 0.5rem;
+  padding-inline-start: calc(2.5rem - 6px);
+  padding-inline-end: 2.5rem;
+  border-left: 6px solid ${theme.colors.primary};
+
+  p {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  cite {
+    display: block;
+    margin-top: 1rem;
+
+    &::before {
+      content: "\\2014\\00a0";
+    }
+  }
+`
+
 export const global = css`
   html {
     font-size: ${theme.baseSize[0]};
@@ -83,6 +109,14 @@ export const global = css`
   ol,
   div {
     font-size: ${theme.baseSize[1]};
+  }
+
+  ul {
+    padding-inline-start: 2.5rem;
+  }
+
+  blockquote {
+    ${blockquote}
   }
 
   a {

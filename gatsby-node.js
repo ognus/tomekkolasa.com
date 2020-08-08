@@ -9,7 +9,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const result = await graphql(
     `
       {
-        allMarkdownRemark(
+        allMdx(
           filter: { fields: { visible: { eq: true } } }
           sort: { fields: [frontmatter___date], order: DESC }
           limit: 1000
@@ -33,7 +33,7 @@ exports.createPages = async ({ graphql, actions }) => {
   }
 
   // Create blog posts pages.
-  const posts = result.data.allMarkdownRemark.nodes
+  const posts = result.data.allMdx.nodes
 
   posts.forEach(post => {
     const { slug } = post.fields
@@ -51,7 +51,7 @@ exports.createPages = async ({ graphql, actions }) => {
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
 
-  if (node.internal.type === "MarkdownRemark") {
+  if (node.internal.type === "Mdx") {
     const parent = getNode(node.parent)
     const filePath = createFilePath({ node, getNode })
     const isDraft = parent.sourceInstanceName === "drafts"

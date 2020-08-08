@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import { graphql } from "gatsby"
+import { MDXRenderer } from "gatsby-plugin-mdx"
 import React from "react"
 import { Bio } from "../components/bio"
 import { SEO } from "../components/seo"
@@ -13,9 +14,7 @@ const Footer = styled.footer`
   border-top: 1px solid ${theme.colors.text};
 `
 
-const BlogPostTemplate = ({ data }) => {
-  const post = data.markdownRemark
-
+const BlogPostTemplate = ({ data: { mdx: post } }) => {
   return (
     <>
       <SEO
@@ -31,8 +30,10 @@ const BlogPostTemplate = ({ data }) => {
             {post.fields.draft && <span>Draft</span>}
           </p>
         </header>
-        <TOC html={post.tableOfContents} />
-        <section dangerouslySetInnerHTML={{ __html: post.html }} />
+        <TOC items={post.tableOfContents.items} />
+        <section>
+          <MDXRenderer slug={post.fields.slug}>{post.body}</MDXRenderer>
+        </section>
         <Footer>
           <Bio />
         </Footer>
@@ -45,11 +46,11 @@ export default BlogPostTemplate
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
-    markdownRemark(fields: { slug: { eq: $slug } }) {
+    mdx(fields: { slug: { eq: $slug } }) {
       id
       excerpt(pruneLength: 160)
-      html
-      tableOfContents(absolute: false, maxDepth: 3)
+      body
+      tableOfContents(maxDepth: 3)
       frontmatter {
         title
         date(formatString: "MMMM DD, YYYY")
@@ -57,6 +58,7 @@ export const pageQuery = graphql`
       }
       fields {
         draft
+        slug
       }
     }
   }

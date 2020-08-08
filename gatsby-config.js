@@ -42,9 +42,10 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: `gatsby-plugin-mdx`,
       options: {
-        plugins: [
+        extensions: [`.mdx`, `.md`],
+        gatsbyRemarkPlugins: [
           {
             resolve: `gatsby-remark-autolink-headers`,
             options: {
@@ -58,7 +59,7 @@ module.exports = {
               wrapperStyle: `
                 margin-left: -2rem;
                 margin-right: -2rem;
-              `
+              `,
             },
           },
           {
@@ -93,13 +94,13 @@ module.exports = {
     `gatsby-transformer-yaml`,
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    `gatsby-plugin-feed-mdx`,
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
         trackingId: `UA-134252917-1`,
       },
     },
-    `gatsby-plugin-feed`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {

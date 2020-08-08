@@ -1,10 +1,13 @@
 import styled from "@emotion/styled"
 import { Global } from "@emotion/core"
+import { MDXProvider } from "@mdx-js/react"
 
 import React from "react"
 import { Header } from "./header"
 import { global } from "../styles/global"
 import { theme } from "../theme"
+import { Tweet } from "./widgets/tweet"
+import { Block } from "./widgets/block"
 
 const Root = styled.div`
   display: flex;
@@ -31,13 +34,17 @@ const Footer = styled.footer`
 `
 
 const Layout = ({ children }) => {
+  const shortcodes = { Tweet, Block }
+
   return (
     <Root>
       <Global styles={global} />
 
       <Content>
         <Header />
-        <Main>{children}</Main>
+        <Main>
+          <MDXProvider components={shortcodes}>{children}</MDXProvider>
+        </Main>
       </Content>
 
       <Footer>

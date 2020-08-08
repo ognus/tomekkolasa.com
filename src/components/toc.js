@@ -1,18 +1,8 @@
 import React from "react"
 import styled from "@emotion/styled"
 
-/**
- * @param {string} html
- * @returns {string}
- */
-function convertToOrderedLists(html) {
-  return html
-    .replace(/>\s+/g, ">") // remove trailing space
-    .replace(/(<\/?)ul(>)/g, "$1ol$2") // replace ul to ol
-}
-
 const TableOfContents = styled.aside`
-  border-left: 4px solid #f5f2f0;
+  border-left: 6px solid #f5f2f0;
   margin-bottom: 2rem;
   padding-left: 1rem;
 
@@ -34,11 +24,6 @@ const TableOfContents = styled.aside`
       margin-top: 0;
     }
 
-    p {
-      display: inline;
-      margin: 0;
-    }
-
     li {
       a {
         opacity: 0.8;
@@ -50,15 +35,22 @@ const TableOfContents = styled.aside`
   }
 `
 
-const TOC = ({ header = "Table of contents", html }) => {
-  const tocHtml = convertToOrderedLists(html)
+const NestedList = ({ items = [] }) => (
+  <ol>
+    {items.map(({ url, title, items: subItems }) => (
+      <li key={url}>
+        <a href={url}>{title}</a>
+        {subItems && <NestedList items={subItems} />}
+      </li>
+    ))}
+  </ol>
+)
 
-  return (
-    <TableOfContents>
-      <h2>{header}</h2>
-      <div dangerouslySetInnerHTML={{ __html: tocHtml }}></div>
-    </TableOfContents>
-  )
-}
+const TOC = ({ header = "Table of contents", items }) => (
+  <TableOfContents>
+    <h2>{header}</h2>
+    <NestedList items={items} />
+  </TableOfContents>
+)
 
 export default TOC

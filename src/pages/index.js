@@ -11,7 +11,7 @@ const About = styled.article`
 `
 
 const BlogIndex = ({ data }) => {
-  const posts = data.allMarkdownRemark.nodes
+  const posts = data.allMdx.nodes
 
   return (
     <>
@@ -61,7 +61,7 @@ export default BlogIndex
 
 export const pageQuery = graphql`
   query {
-    allMarkdownRemark(
+    allMdx(
       filter: { fields: { visible: { eq: true } } }
       sort: { fields: [frontmatter___date], order: DESC }
     ) {
