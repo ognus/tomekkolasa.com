@@ -1,0 +1,299 @@
+---
+title: How to use optional parameters in JSON.stringify and JSON.parse
+description: Creating JSON strings with JSON.stringify or parsing them with JSON.parse is something JavaScript developers do almost on a daily basis. However, there's more to it than meets the eye. In this post we’ll have a detailed look into JSON.stringify’s replacer function, indentation customization, toJSON method, and JSON.parse’s reviver function.
+---
+
+There is no web development without JSON nowadays. Especially if any JavaScript is involved. So I'm sure you're at least familiar with it. If not, that's ok too.
+
+Either way, let's dive into JavaScript JSON support. I will explain the basic usage as well as try to explore some lesser-known features and use cases.
+
+But what is JSON, exactly?
+
+**JSON** stands for **JavaScript Object Notation** and is a lightweight data-interchange format specified by Douglas Crockford. It's a pure text format, which makes it language independent. So even though it is based on JavaScript syntax, it has been widely adopted in essentially all programming languages in use today.
+
+The main benefit of the JSON format is that it is easy for humans to read and write, but also for programs to parse and generate.
+
+In client-server communication, JSON has mostly replaced the XML, a previously widely-used format, becoming the de-facto standard for data interchange on the web.
+
+JavaScript comes with a built-in support for the JSON format in the form of a global object called - who would have guessed - `JSON`. This object provides two methods for generating and parsing JSON format, the `JSON.stringify()` method and the `JSON.parse()` method.
+
+Without further ado, let's start by looking at how we can convert values to JSON using the `JSON.stringify()` method.
+
+## JSON.stringify()
+
+The `JSON.stringify()` method converts a value to its JSON string representation. It's commonly used to convert a JavaScript object but you can also pass primitive values like numbers or booleans and they will also be converted to strings.
+
+Beside a **value** to convert, the method also accepts two optional parameters, **replacer** and **space**:
+
+```javascript
+JSON.stringify(value[, replacer[, space]])
+```
+
+Let's have a look at some examples of how to use those parameters.
+
+### Customizing JSON.stringify() with the replacer function
+
+When calling `JSON.stringify()` you can pass a function as a second argument. This function allows you to change how `JSON.stringify()` converts a value into string.
+
+To mimic the default behaviour of `JSON.stringify()`, the replacer function would look something like that:
+
+```javascript
+JSON.stringify(object, (key, value) => {
+  return value;
+});
+```
+
+In this case it just returns the value as is, so the behaviour is exactly the same as if we won’t specify a replacer function at all.
+
+Ok, so let's have a look at a more interesting example. Assume we have a user object that holds the user’s email and password, and we want to convert this object to JSON. However, we don’t want to expose the password. We can use the custom replacer function to "hide" the value of a `password` property:
+
+```javascript
+const user = { email: "goku@capsule.corp", password: "kamehameha" };
+
+JSON.stringify(user, (key, value) => {
+  // if property name is "password" hide the real value
+  if (key === "password") {
+    return "***";
+  }
+  // otherwise, proceed as normal by returning the property's value
+  return value;
+});
+
+// "{"email":"goku@capsule.corp","password":"***"}"
+// voila! now you cannot see the password in the JSON string
+```
+
+Turns out that the replacer function is not the only value we can pass as a second argument. `JSON.stringify()` also accepts an array of property names. We can use it to specify which properties of the value object will be included in the resulting JSON string:
+
+```javascript
+const user = {
+  email: "goku@capsule.corp",
+  username: "kakarotto",
+  password: "kamehameha",
+};
+
+JSON.stringify(user, ["email", "username"]);
+// "{"email":"goku@capsule.corp","username":"kakarotto"}"
+// just the "email" and "username" properties got included
+```
+
+It’s very useful if you would like to omit certain properties.
+
+### Customizing indentation with the space parameter
+
+By default `JSON.stringify()` returns the converted string without any whitespaces. This makes the result more compact, which is good for sending JSON over the network, but not so good for debugging when you care more about readability.
+
+Fortunately, it's easy to make `JSON.stringify()` to return a more readable JSON representation. The function's 3rd parameter, an optional indentation parameter, allows us to pretty-print the JSON string. If the parameter is specified, `JSON.stringify()` will return a multiline string with each line prepended with space characters. We can control how many spaces are introduced with a numeric value.
+
+Let's have a look at a basic example:
+
+```javascript
+const user = {
+  name: "Son Gokū",
+  profile: {
+    height: 175,
+    occupation: "farmer",
+  },
+};
+
+// without indentation
+console.log(JSON.stringify(user));
+// {"name":"Son Gokū","profile":{"height":175,"occupation":"farmer"}}
+
+// with 2 spaces indentation
+console.log(JSON.stringify(user, null, 2));
+// {
+//   "name": "Son Gokū",
+//   "profile": {
+//     "height": 175,
+//     "occupation": "farmer"
+//   }
+// }
+```
+
+As you can see it’s very easy to pretty-print the JSON string just by specifying a number of spaces as the indentation parameter. What’s interesting however, is that we can also pass an arbitrary string value (e.g. `”| ”` ) to be used as an indentation:
+
+```javascript
+// any string should do
+JSON.stringify(user, null, "|  ");
+// {
+// |  "name": "Son Gokū",
+// |  "profile": {
+// |  |  "height": 175,
+// |  |  "occupation": "farmer"
+// |  }
+// }
+
+// it works for all Unicode characters, emojis included
+JSON.stringify(user, null, "🍉");
+// {
+// 🍉"name": "Son Gokū",
+// 🍉"profile": {
+// 🍉🍉"height": 175,
+// 🍉🍉"occupation": "farmer"
+// 🍉}
+// }
+```
+
+How cool is that!?
+
+### toJSON()
+
+Turns out that the replacer function is not the only way to customize how `JSON.stringify()` creates the JSON string. We can also do that on a per-object basis. If an object contains a method called `toJSON()`, then the value returned by this method will be converted to a JSON string, instead of the object itself.
+
+Let's see how we could use the `toJSON()` method in practice.
+
+As an example we'll create a `Credentials` class that contains a user's `email` and `password` properties. The class will also implement the `toJSON` method, which will be responsible for excluding the `password` property from the JSON string unless the whole object is wrapped in a `data` property.
+
+This could be useful when we send the credentials object as a body of an HTTP POST request. If we wrapped it with an object with the property `data` it will include much needed `password` property.
+
+```javascript
+class Credentials {
+  constructor(email, password) {
+    this.email = email;
+    this.password = password;
+  }
+
+  toJSON(key) {
+    if (key === "data") {
+      return this;
+    }
+
+    return { email: this.email };
+  }
+}
+
+const credentials = new Credentials("joe@user.com", "secret");
+
+JSON.stringify(credentials);
+// "{"email":"joe@user.com"}"
+// the “password” property was not included
+
+JSON.stringify({ data: credentials });
+// "{"data":{"email":"joe@user.com","password":"secret"}}"
+// the “password” property was included
+// because the object is wrapped with the “data” property
+```
+
+Using a class is just an example and the `toJSON()` method will work with the object literal notation as well.
+
+## JSON.parse()
+
+We already know how to generate a JSON string with the `JSON.stringify()` method. But how can we do the opposite? How do we convert a JSON string to plain JavaScript object or value?
+
+The answer is the `JSON.parse()` method.
+
+It's very simple to use; just pass a JSON string as an argument and you get a parsed value back:
+
+```javascript
+const object = JSON.parse('{"key":"value"}');
+// { key: "value" }
+```
+
+One thing to have in mind is that the `JSON.parse()` will throw a `SyntaxError` exception if the string argument is not a valid JSON. This behavior is not that common in JavaScript as only a handful of build-in methods throw exceptions.
+
+What's also interesting about `JSON.parse()` is that it allows us to specify a **reviver** function as a second argument to customize the parsing process:
+
+```javascript
+JSON.parse(text[, reviver]);
+```
+
+### Transforming the results with the reviver function
+
+We can use JSON.parse’s optional `reviver` function to filter or alter object properties before they're returned. We could also easily do that ourselves by looping through object properties after it's returned.
+
+So what's the point? You might ask.
+
+Well, the useful thing about the `reviver` function is that it will get called for every single object, even the nested ones. So it saves us trouble writing tree traversal code.
+
+Is there any real project scenario we could use it for?
+
+The answer is YES!
+
+For example, let’s imagine we work on a frontend app that needs to fetch some data from the server. As our app would grow bigger we might want to keep the data related code more organized and use some sort of data abstraction like DAO or Repository patterns. In this scenario our project would introduce multiple classes, each modeling its own data entity. We could then use the `reviver` function to process the server response and wrap each JSON object with a matching model class instance.
+
+For the sake of an example, let's assume we work on a blog functionality. This is how some simple model classes might look like:
+
+```javascript
+class Person {
+  constructor({ name }) {
+    this.name = name;
+  }
+}
+
+class Comment {
+  constructor({ text, author }) {
+    this.text = text;
+    this.author = author;
+  }
+}
+
+class Post {
+  constructor({ title, author, comments }) {
+    this.title = title;
+    this.author = author;
+    this.comments = comments;
+  }
+}
+```
+
+Let’s follow up with some dummy blog data we could use to pretend we got them from the server. The example data contain a single post and a reader’s comment:
+
+```javascript
+const posts = JSON.stringify([
+  {
+    type: "post",
+    title: "hello world",
+    author: { type: "person", name: "John" },
+    comments: [
+      {
+        type: "comment",
+        author: { type: "person", name: "Mike" },
+        text: "hi",
+      },
+    ],
+  },
+]);
+```
+
+Now, it's time to use `JSON.parse()` to convert the example JSON data into instances of our model classes:
+
+```javascript
+function getPosts(json) {
+  const types = {
+    person: Person,
+    post: Post,
+    comment: Comment,
+  };
+
+  return JSON.parse(json, (key, value) => {
+    const Constructor = types[value.type || ""];
+
+    if (Constructor) {
+      return new Constructor(value);
+    }
+
+    return value;
+  });
+}
+
+console.log(getPosts(posts));
+// [
+//   Post {
+//     title: 'hello world',
+//     author: Person { name: 'John' },
+//     comments: [
+//       Comment {
+//         text: 'hi',
+//         Person { name: 'Mike' }
+//       }
+//     ]
+//   }
+// ]
+```
+
+As you’d see from the `console.log` result, our solution correctly wrapped each data object with the respective model instance. This was possible because the `reviver` function is called in a bottom-up fashion, much like Depth First Search tree traversal. So we first get the key and value of the most nested JSON objects. That's why the `Person` object is created first for the reader’s comment, followed by the `Comment` instance itself as well as the `Person` object for the author, and finally the `Post`.
+
+I hope you found that useful or interesting. `JSON.stringify` and `JSON.parse` are essential methods used on a daily basis by JavaScript developers. Even if you have already used them, it's useful to refresh the basics. I will let you in on a secret: I've used `JSON.stringify` and `JSON.parse` for a long time before I realized that you can pass extra arguments to alter their behavior 😅
+
+How about you, have you used replacer or reviver before?

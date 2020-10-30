@@ -157,6 +157,9 @@ const object = { a: { b: { c: { d: { e: 1 } } } } };
 console.log(object);
 // { a: { b: { c: [Object] } } }
 
+console.log(JSON.stringify(object));
+// {"a":{"b":{"c":{"d":{"e":1}}}}}
+
 console.log(JSON.stringify(object, null, 2));
 // {
 //   "a": {
