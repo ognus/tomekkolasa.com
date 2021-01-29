@@ -1,6 +1,26 @@
-## Cloud Function
+---
+title: How to create Node.js background task using Google Cloud Function and Pub/Sub
+description: 
+date: 
+---
 
-### Pub/Sub example
+## Creating Node.js Cloud Function
+
+```javascript
+// index.js
+
+exports.helloThere = () => {
+  console.log("Yo!");
+}
+```
+
+With message that can be used for params
+
+
+
+
+
+## Triggering Node.js Cloud Function with Pub/Sub
 
 ```javascript
 /**
@@ -21,7 +41,7 @@ exports.helloPubSub = (data, context) => {
 };
 ```
 
-### Deployment example
+## Deploying Node.js Cloud Function
 
 Background function with pub/sub trigger on YOUR_TOPIC_NAME topic
 
@@ -36,6 +56,7 @@ for custom path.
 ### Custom build step
 
 https://cloud.google.com/functions/docs/writing/specifying-dependencies-nodejs#executing_custom_build_steps_during_deployment
+https://cloud.google.com/appengine/docs/standard/nodejs/running-custom-build-step#example
 
 ### ENV vars example
 
@@ -73,3 +94,5 @@ async function accessSecretVersion() {
 
 accessSecretVersion();
 ```
+
+## Scheduling Node.js cron jobs using Cloud Scheduler
