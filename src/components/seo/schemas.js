@@ -1,38 +1,10 @@
+import { toISODate } from "../../utils/date"
+
 export const PAGE_TYPES = {
   BLOG: "BlogPosting",
   ABOUT: "AboutPage",
   CONTACT: "ContactPage",
   DEFAULT: "WebPage",
-}
-
-function toDate(value) {
-  if (typeof value === "string") {
-    if (value.includes("T")) {
-      return new Date(value)
-    }
-
-    const params = value
-      .split(/[-/:.\s]/)
-      .filter(p => p)
-      .map(p => Number.parseInt(p, 10))
-
-    const [, month] = params
-    params[1] = month - 1
-    return new Date(...params)
-  }
-
-  if (typeof value === "number") {
-    return new Date(value)
-  }
-
-  return value
-}
-
-function toISODate(date) {
-  if (date) {
-    return toDate(date).toISOString()
-  }
-  return date
 }
 
 function getPerson({ name, familyName, givenName, alumniOf, jobTitle, credential }) {

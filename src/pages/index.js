@@ -48,7 +48,8 @@ const BlogIndex = ({ data }) => {
             title={title}
             description={description}
             slug={slug}
-            date={frontmatter.date}
+            published={frontmatter.date}
+            updated={frontmatter.updated}
             isDraft={draft}
           />
         )
@@ -66,16 +67,7 @@ export const pageQuery = graphql`
       sort: { fields: [frontmatter___date], order: DESC }
     ) {
       nodes {
-        excerpt
-        fields {
-          slug
-          draft
-        }
-        frontmatter {
-          date(formatString: "MMMM DD, YYYY")
-          title
-          description
-        }
+        ...postDetails
       }
     }
   }

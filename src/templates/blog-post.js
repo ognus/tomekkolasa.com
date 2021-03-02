@@ -3,6 +3,7 @@ import { graphql } from "gatsby"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 import React from "react"
 import { Bio } from "../components/bio"
+import { PostDate } from "../components/post-date"
 import { SEO } from "../components/seo"
 import { PAGE_TYPES } from "../components/seo/schemas"
 import TOC from "../components/toc"
@@ -15,18 +16,31 @@ const Footer = styled.footer`
 `
 
 const BlogPostTemplate = ({ data: { mdx: post } }) => {
+  const {
+    frontmatter: {
+      title,
+      description,
+      date: datePublished,
+      updated: dateUpdated,
+    },
+  } = post
+
   return (
     <>
       <SEO
-        title={post.frontmatter.title}
-        description={post.frontmatter.description || post.excerpt}
+        title={title}
+        description={description || post.excerpt}
         schemaOrgType={PAGE_TYPES.BLOG}
+        datePublished={datePublished}
+        dateModified={dateUpdated}
       />
       <article>
         <header>
-          <h1>{post.frontmatter.title}</h1>
+          <h1>{title}</h1>
           <p>
-            <span>{post.frontmatter.date}</span>
+            <span>
+              <PostDate published={datePublished} updated={dateUpdated} />
+            </span>
             {post.fields.draft && <span>Draft</span>}
           </p>
         </header>
@@ -48,18 +62,9 @@ export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
     mdx(fields: { slug: { eq: $slug } }) {
       id
-      excerpt(pruneLength: 160)
       body
       tableOfContents(maxDepth: 3)
-      frontmatter {
-        title
-        date(formatString: "MMMM DD, YYYY")
-        description
-      }
-      fields {
-        draft
-        slug
-      }
+      ...postDetails
     }
   }
 `

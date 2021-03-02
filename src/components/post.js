@@ -4,6 +4,7 @@ import { Link } from "gatsby"
 
 import { theme } from "../theme"
 import { wide } from "../styles/global"
+import { PostDate } from "./post-date"
 
 const PostLink = styled(Link)`
   ${wide}
@@ -52,7 +53,14 @@ const PostLink = styled(Link)`
   }
 `
 
-export const Post = ({ title, description, slug, date, isDraft }) => {
+export const Post = ({
+  title,
+  description,
+  slug,
+  published,
+  updated,
+  isDraft,
+}) => {
   return (
     <article>
       <PostLink to={slug}>
@@ -61,7 +69,9 @@ export const Post = ({ title, description, slug, date, isDraft }) => {
             <span className="link">{title}</span>
           </h3>
           {isDraft && <strong>Draft </strong>}
-          <small>{date}</small>
+          <small>
+            <PostDate published={published} updated={updated} />
+          </small>
         </header>
         <section>
           <p
