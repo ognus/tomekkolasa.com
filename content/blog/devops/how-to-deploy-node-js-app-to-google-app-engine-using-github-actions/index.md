@@ -2,6 +2,7 @@
 title: "How to deploy a Node.js app to Google App Engine using Github Actions"
 description: "Quick guide to basic Google App Engine deployment. It explains how to deploy a Node.js application and set up a continuous deployment workflow with Github Actions."
 date: 2020-07-26 11:00
+updated: 2021-03-02 11:00
 ---
 
 Google App Engine (GAE) is a nice and simple way to deploy your project. You can get up and running pretty quickly by using standard Node.js runtime. It comes with reasonable default settings, so you won't need a lot of configuration to get started.
@@ -170,7 +171,7 @@ There are so many possibilities to set up continuous deployment for Google App E
 
 One way you can do it effectively is via Github Actions. It's a fairly new, Github's own CI/CD solution. I like it, because you can build, test and deploy projects directly from Github with minimal configuration.
 
-We’ll also leverage existing Google App Engine deployment Action that is available on GCP's official [github-actions repository](https://github.com/GoogleCloudPlatform/github-actions/tree/master/appengine-deploy).
+We’ll also leverage existing Google App Engine deployment Action that is available on Google's [deploy-appengine repository](https://github.com/google-github-actions/deploy-appengine).
 
 Let’s start by adding a Github Actions workflow file `.github/workflows/deploy.yaml` to the project. It specifies the deployment job details:
 
@@ -188,7 +189,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: GoogleCloudPlatform/github-actions/appengine-deploy@master
+      - uses: google-github-actions/deploy-appengine@main
         with:
           credentials: ${{ secrets.gcp_credentials }}
 ```
