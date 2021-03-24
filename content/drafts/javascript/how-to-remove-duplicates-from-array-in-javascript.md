@@ -20,6 +20,33 @@ into an array where each of the elements in present only once:
 
 In other words, we don't want any element to repeat in the array. Which is perfect in this case, as too many slices of pizza and hamburgers is not good for you 😉.
 
+We'll also look at case when values in the array are more complex objects and we'd like to compare objects by what's inside of them a not by their reference value. 
+
+strict comparison might not always be what we want
+
+Imagine we have a list of food objects instead of emoji string values like before.
+
+```javascript
+const foods = [
+  { icon: "🍕", name: "pizza", variant: "Pepperoni", ... },
+  { icon: "🍕", name: "pizza", variant: "Margherita", ... },
+  { icon: "🍔", name: "burger", variant: "Cheeseburger", ... },
+  { icon: "🍔", name: "burger", variant: "Wagyu Beef Burger", ... },
+]
+```
+
+```javascript
+const foods.map(({ icon, name }) => ({ icon, name }));
+[
+  { icon: "🍕", name: "pizza" },
+  { icon: "🍕", name: "pizza" },
+  { icon: "🍔", name: "burger" },
+  { icon: "🍔", name: "burger" },
+]
+
+```
+
+
 Without further ado let's have a look at the first we can accomplish array deduplication in JavaScript.
 
 ## Set
@@ -36,6 +63,11 @@ Using `Set` to remove duplicates from an array is great! It's short, understanda
 It might not be the fastest...
 
 Time Complexity: O(N) - populating a Set with an array values takes N, as check/insert to Set takes O(1). Converting Set to array, i.e. iterating over the Set values also takes O(N).
+
+How to use it to remove duplicated when the values are objects? You can't 
+
+let filteredList = [...new Set(fullNameList.map(JSON.stringify))].map(JSON.parse);
+
 
 ## Lodash
 
@@ -87,6 +119,19 @@ function deduplicate(values) {
 }
 ```
 
+For objects we can use `Array.some()` as it accept the condition to check:
+
+```javascript
+function deduplicate(objects, key) {
+  return objects.reduce(
+    (unique, object) => (
+      unique.some(obj => obj[key] === object[key]) ? unique : [...unique, object]
+    ),
+    []
+  );
+}
+```
+
 ## Using the for loop
 
 This is the most straighforward. If you'd have much experience in JavaScript and someone asked you to write a function that removes the duplicates from an array, that would probably be it. Nothing really bad about it, as this implementation is very easy to read and understand. Classical imperative programming style :) This implementation would most likely look very similar in other languages, like Java, C++ or Go (TODO: check).
@@ -132,7 +177,7 @@ function deduplicate(values) {
   const unique = new Set();
 
   for (value of values) {
-      unique.add(value);
+    unique.add(value);
   }
 
   return Array.from(unique);

@@ -1,0 +1,70 @@
+---
+title: Value vs reference in JavaScript
+description: 
+date: 2021-02-05 11:00
+---
+
+
+
+```javascript
+const pizza = "pizza";
+
+const tasty = pizza;
+tasty === pizza;
+// true
+
+const samePizza = "pizza";
+samePizza === pizza;
+// true
+```
+
+Primitive values (string, boolean, number, null or undefined) are assigned to variables by their value, as you'd expect. So in our example the variable
+`pizza` has a string value `"pizza"`, same as variable `tasty` and `samePizza`. So when we compare them we'll always get `true`, as equality operator `===` always compares values.
+
+This is a bit different for an object however:
+
+```javascript
+const pizza = { name: "pizza" };
+
+const tasty = pizza;
+tasty === pizza;
+// true
+
+const samePizza = { name: "pizza" };
+samePizza === pizza;
+// false
+```
+
+
+
+So when you are moving values arround in you code their value is always copied. For example when you assign your value to another variable or pass it as an argument to a function, it will get copied. This works great, but the more copies they are the more memory your program will use. This is not a problem for primitive values like string `"pizza"` or a number `123` or even a number `123456789` :D. But because objects can contain other object and primitives, always coping them by value would be both CPU and memory heavy, so JavaScript does not store object's values in the variable directly. Just a reference.
+
+How the reference looks like> If you look at chrome dev tools mem snapshot (?) it looks sth like that `@1231231`. Just a number, that represents where the value is stored. Similar to a key in a hash table or dictionary structure.
+
+Other languages give the developer control over when to pass the value (including objects) by reference or by value (a copy). JavaScript does not. It always passes any value as a value and thus making a copy. However, for objects the value is always a reference to the actual object, not the object itself. When you access the object by using a variable like in `let o = { v: 1 }; o.1;` JavaScript is dereferencing the reference `o` to access the object value.
+
+Ok that's how primitives and Objects and handled but what about arrays and functions? Well, both arrays and functions are also objects in JavaScript. 
+
+TODO Picture
+
+
+https://en.wikipedia.org/wiki/String_interning
+https://softwareengineering.stackexchange.com/questions/325811/memory-usage-of-javascript-string-type-with-identical-values
+
+
+
+Key points
+- variables are always passed by value (https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
+
+- `==`, `===`, and `Object.is()` compare by value
+- for primitives variables store their value
+- for objects variables do not store value, but a reference to a value
+
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+
+
+
+https://dave.cheney.net/2017/04/29/there-is-no-pass-by-reference-in-go
+https://stackoverflow.com/questions/27879068/why-do-programmers-say-that-pass-by-reference-is-really-passing-references-by
+https://stackoverflow.com/questions/518000/is-javascript-a-pass-by-reference-or-pass-by-value-language
