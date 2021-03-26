@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 import { graphql, useStaticQuery } from "gatsby"
-import Image from "gatsby-image"
+import { GatsbyImage } from "gatsby-plugin-image"
 import React from "react"
 import { SocialLinks } from "./social-links"
 
@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
 `
 
-const Avatar = styled(Image)`
+const Avatar = styled(GatsbyImage)`
   min-width: 70px;
   border-radius: 100%;
   margin-right: 1rem;
@@ -28,9 +28,7 @@ export const Bio = ({ children = DefaultContent, className }) => {
     query BioQuery {
       avatar: file(absolutePath: { regex: "/profile-pic.jpg/" }) {
         childImageSharp {
-          fixed(width: 70, height: 70) {
-            ...GatsbyImageSharpFixed
-          }
+          gatsbyImageData(width: 70, height: 70, layout: FIXED)
         }
       }
     }
@@ -39,7 +37,7 @@ export const Bio = ({ children = DefaultContent, className }) => {
   return (
     <Container className={className}>
       <Avatar
-        fixed={avatar.childImageSharp.fixed}
+        image={avatar.childImageSharp.gatsbyImageData}
         alt="Tomek Kolasa"
         imgStyle={{
           borderRadius: `50%`,

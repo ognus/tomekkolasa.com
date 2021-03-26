@@ -6,54 +6,22 @@ const description = `
 
 module.exports = {
   siteMetadata: {
-    title: `Tomek Kolasa | Deep dive into a full-stack JavaScript`,
+    title: "Tomek Kolasa | Deep dive into a full-stack JavaScript",
     description: description.trim().replace(/\s+/, " "),
-    siteUrl: `https://tomekkolasa.com/`,
+    siteUrl: "https://tomekkolasa.com/",
     social: {
-      twitter: `ognus`,
+      twitter: "ognus",
     },
   },
   plugins: [
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: "gatsby-theme-grape-blog",
       options: {
-        path: `${__dirname}/content/blog`,
-        name: `blog`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: `${__dirname}/content/drafts`,
-        name: `drafts`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: `${__dirname}/content/assets`,
-        name: `assets`,
-      },
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: `${__dirname}/content/data`,
-      },
-    },
-    {
-      resolve: `gatsby-plugin-mdx`,
-      options: {
-        extensions: [`.mdx`, `.md`],
+        googleAnalyticsId: "UA-134252917-1",
         gatsbyRemarkPlugins: [
+          // overwrite gatsby-remark-images options
           {
-            resolve: `gatsby-remark-autolink-headers`,
-            options: {
-              icon: false,
-            },
-          },
-          {
-            resolve: `gatsby-remark-images`,
+            resolve: "gatsby-remark-images",
             options: {
               maxWidth: 800,
               wrapperStyle: `
@@ -62,15 +30,7 @@ module.exports = {
               `,
             },
           },
-          {
-            resolve: `gatsby-remark-responsive-iframe`,
-            options: {
-              wrapperStyle: `margin-bottom: 1.0725rem`,
-            },
-          },
-          `gatsby-remark-prismjs`,
-          `gatsby-remark-copy-linked-files`,
-          `gatsby-remark-smartypants`,
+          "gatsby-remark-prismjs",
         ],
       },
     },
@@ -91,38 +51,24 @@ module.exports = {
         minify: true,
       },
     },
-    `gatsby-transformer-yaml`,
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
-    `gatsby-plugin-feed-mdx`,
     {
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: "gatsby-plugin-manifest",
       options: {
-        trackingId: `UA-134252917-1`,
+        name: "Tomek Kolasa",
+        short_name: "Tomek Kolasa",
+        start_url: "/",
+        background_color: "#ffffff",
+        theme_color: "#7b1fff",
+        display: "minimal-ui",
+        icon: "content/assets/logo.png",
       },
     },
     {
-      resolve: `gatsby-plugin-manifest`,
+      resolve: "gatsby-plugin-layout",
       options: {
-        name: `Tomek Kolasa`,
-        short_name: `Tomek Kolasa`,
-        start_url: `/`,
-        background_color: `#ffffff`,
-        theme_color: `#7b1fff`,
-        display: `minimal-ui`,
-        icon: `content/assets/logo.png`,
+        component: require.resolve("./src/components/layout"),
       },
     },
-    {
-      resolve: `gatsby-plugin-layout`,
-      options: {
-        component: require.resolve(`./src/components/layout`),
-      },
-    },
-    `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-emotion`,
-    // this (optional) plugin enables Progressive Web App + Offline functionality
-    // To learn more, visit: https://gatsby.dev/offline
-    // `gatsby-plugin-offline`,
+    "gatsby-plugin-emotion",
   ],
 }

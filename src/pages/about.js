@@ -1,9 +1,9 @@
 import styled from "@emotion/styled"
 import { graphql } from "gatsby"
-import Image from "gatsby-image"
+import { GatsbyImage } from "gatsby-plugin-image"
 import React from "react"
-import { SEO } from "../components/seo"
-import { PAGE_TYPES } from "../components/seo/schemas"
+import { SEO } from "gatsby-theme-grape-blog/src/components/seo"
+import { PAGE_TYPES } from "gatsby-theme-grape-blog/src/utils/schema-org"
 import { theme } from "../theme"
 
 const Header = styled.header`
@@ -42,7 +42,7 @@ const AboutPage = ({ data: { profile } }) => {
 
       <Header>
         <ProfileImage>
-          <Image fluid={profile.childImageSharp.fluid} />
+          <GatsbyImage image={profile.childImageSharp.gatsbyImageData} />
         </ProfileImage>
         <ProfileText>
           <h1>Hi, I'm Tomek.</h1>
@@ -72,9 +72,10 @@ const AboutPage = ({ data: { profile } }) => {
       <h2>About the blog</h2>
       <p>
         This blog is a deep dive into a full-stack JavaScript ecosystem. Topics
-        ranging from frontend development through the backend, and finally DevOps. I
-        believe that familiarizing yourself with all aspects of software
-        development will tremendously improve the outcomes of your work.
+        ranging from frontend development through the backend, and finally
+        DevOps. I believe that familiarizing yourself with all aspects of
+        software development will tremendously improve the outcomes of your
+        work.
       </p>
 
       <p>
@@ -123,9 +124,7 @@ export const pageQuery = graphql`
   query ProfileImageQuery {
     profile: file(absolutePath: { regex: "/profile-pic.jpg/" }) {
       childImageSharp {
-        fluid(maxWidth: 400, quality: 80) {
-          ...GatsbyImageSharpFluid
-        }
+        gatsbyImageData(width: 400, quality: 80, layout: CONSTRAINED)
       }
     }
   }

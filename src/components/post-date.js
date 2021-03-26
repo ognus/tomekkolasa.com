@@ -1,10 +1,9 @@
 import React from "react"
-import { formatDate } from "../utils/date"
 
 export const PostDate = ({ published, updated }) => {
   if (updated) {
-    return <>Updated: {formatDate(updated)}</>
+    return <>Updated: {updated}</>
   }
 
-  return <>{formatDate(published)}</>
+  return <>{published}</>
 }

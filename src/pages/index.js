@@ -2,8 +2,8 @@ import styled from "@emotion/styled"
 import { graphql, Link } from "gatsby"
 import React from "react"
 import { Bio } from "../components/bio"
-import { Post } from "../components/post"
-import { SEO } from "../components/seo"
+import { PostItem } from "../components/post-item"
+import { SEO } from "gatsby-theme-grape-blog/src/components/seo"
 import { SocialLinks } from "../components/social-links"
 
 const About = styled.article`
@@ -43,7 +43,7 @@ const BlogIndex = ({ data }) => {
         const description = frontmatter.description || excerpt
 
         return (
-          <Post
+          <PostItem
             key={slug}
             title={title}
             description={description}

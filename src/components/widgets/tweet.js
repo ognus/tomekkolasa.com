@@ -1,5 +1,5 @@
 import React from "react"
-import { useSiteMetadata } from "../../hooks/use-site-metadata"
+import { useSiteMetadata } from "gatsby-theme-grape-blog/src/hooks/use-site-metadata"
 
 function getTweetIntent({ text, url, via, hashtags = [] }) {
   const intent = new URL("https://twitter.com/intent/tweet")

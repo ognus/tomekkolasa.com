@@ -1,0 +1,19 @@
+- id: tomek
+  displayName: Tomek Kolasa
+  givenName: Tomasz
+  familyName: Kolasa
+  jobTitle: Senior Software Engineer
+  alumniOf:
+    name: Wrocław University of Science and Technology
+    streetAddress: wybrzeże Stanisława Wyspiańskiego 27
+    city: Wrocław
+    country: Poland
+    postalCode: 50-370
+  credential:
+    degreeName: Master of Science
+    degreeLevel: Masters
+    field: Computer Science
+  social:
+    twitter: https://twitter.com/ognus
+    github: https://github.com/ognus
+    linkedin: https://www.linkedin.com/in/tomaszkolasa

@@ -2,7 +2,7 @@ import styled from "@emotion/styled"
 import { Link } from "gatsby"
 import React from "react"
 import { FaArrowLeft, FaRegSadCry } from "react-icons/fa"
-import { SEO } from "../components/seo"
+import { SEO } from "gatsby-theme-grape-blog/src/components/seo"
 import { theme } from "../theme"
 
 const Container = styled.div`
