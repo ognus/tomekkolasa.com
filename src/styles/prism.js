@@ -9,7 +9,7 @@
  *
  * @license MIT 2016-2020
  */
-import { css } from "@emotion/core"
+import { css } from "@emotion/react"
 
 export const prism = css`
   .dark {

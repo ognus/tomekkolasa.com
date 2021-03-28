@@ -53,7 +53,7 @@ const PostLink = styled(Link)`
   }
 `
 
-export const Post = ({
+export const PostItem = ({
   title,
   description,
   slug,
