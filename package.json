@@ -18,7 +18,7 @@
     "gatsby-remark-prismjs": "^4.1.0",
     "gatsby-theme-grape-blog": "^0.0.6",
     "normalize.css": "^8.0.1",
-    "prismjs": "^1.23.0",
+    "prismjs": "^1.24.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",
