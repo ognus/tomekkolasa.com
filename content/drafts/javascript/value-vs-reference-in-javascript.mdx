@@ -1,10 +1,213 @@
 ---
-title: Value vs reference in JavaScript
-description: 
+title: Value vs reference in JavaScript. Is JavaScript a pass-by-value or pass-by-reference language?
+description:
 date: 2021-02-05 11:00
 ---
 
+## Values in JavaScript
 
+In JavaScript you come accross two kind of values, primitive values and objects. The primitive values are basic things like numbers and strings. In total there are 7 primitive types of values in JavaScript:
+
+- null
+- undefined
+- number, including Infinity, -Infinity and NaN
+- bigint
+- string
+- boolean (`true` or `false`)
+- symbol
+
+Objects on the other hand are a compound data structures. We can use a JavaScript object as an unordered collection of properties. A property is basically a named value, in other words a mapping between a name and a value.
+
+The property name can be a string or symbol, and anything that can be converted to a string, which means that basicically any primitive value. The property value can be a primitive or any other object, including arrays and functions. Arrays and Functions in JavaScript are also objects.
+
+## References in JavaScript
+
+All the primitive values in JavaScript are immutable. What it means is that once created it's not possible to change their value. We can however create a new primitive and assign it to the exisiting variable. In fact, even when we want to assign a particular primitive value to a new variable the value itself gets copied. Thus it's not possible to have multiple variables pointing to the same single value in memory.
+
+Let's have a look at simple example to illustrate that:
+
+```javascript
+let myFirstBitconTransation = 1; // Wow! I received 1 BTC from someone
+let myBitcoinAccount = myFirstBitconTransation; // So now I have 1 BTC in my digital wallet
+
+// Even though I tried to increase the transaction amount
+myFirstBitconTransation++;
+console.log(myFirstBitconTransation); // prints 2
+
+// I still have only 1 BTC in my wallet
+console.log(myBitcoinAccount); // prints 1
+```
+
+When you are moving values arround in you code their value is always copied. For example when you assign your value to another variable or pass it as an argument to a function, it will get copied.
+
+This works great, but the more copies they are the more memory your program will use. This is not a problem for primitive values like string `"pizza"` or a number `123` or even a number `12345678900000000` 😄. But because objects can contain other object and primitives, always coping them by value would be both CPU and memory heavy. That's why JavaScript does not store object's value in the variable directly. Just a reference to that value.
+
+So what is this reference thing? Well it's also a value, similar to the primitive value. It's a unique identifier that points to where exactly the actual object value in located in the memory.
+
+Conceptually when the JavaScript is executed all the primitive values (including references) that are passed as function arguments are copied and stored with the function indentifier on a stack. It's like Objects however are not stored in a stack, there are freeilry put in in a chunk on memory called heap. It's like a simple hash table.
+
+<!-- TODO: add link to stack-and-heap post -->
+
+But how the reference value looks like? I hear you ask. Well for example it looks something like this: `@1231231`. Just a number, that represents where the value is stored. Similar to a key in a hash table or dictionary structure. You can check for yourself using Chrome Dev Tools and the Memory Snapshot feature:
+
+<!-- TODO: add DevTools screenshot -->
+
+Other languages give the developer control over when to pass the value (including objects) by reference or by value (a copy). JavaScript does not. It always passes any value as a value and thus making a copy. However, for objects the value is always a reference to the actual object, not the object itself. When you access the object by using a variable like in `let o = { v: 1 }; o.1;` JavaScript is dereferencing the reference `o` to access the object value.
+
+Let's have a look at a example of that:
+
+```javascript
+let myFirstBitconTransation = { value: 1 }; // Wow! I received 1 BTC from someone
+let myBitcoinWallet = [myFirstBitconTransation];
+
+const getTotal = () => myBitcoinWallet.reduce((sum, { value }) => sum + value);
+
+console.log(geTotal()); // prints 1
+
+myFirstBitconTransation.value++;
+console.log(myFirstBitconTransation); // prints 2
+
+//
+console.log(getTotal()); // prints 2
+```
+
+As you can see the updated `value` property of the `myFirstBitconTransation` object is visible inside the `myBitcoinWallet` array. This is possible because `myFirstBitconTransation` was not copied when we added it the array, in fact just a reference to the object was stored in the array, not the object itself.
+
+## Pass by value
+
+When assigning a value to a variable or passing a value as a function argument JavaScript copies the value. The primitive value is copied and the reference is copied. This is why JavaScript can be refered as a pass-by-value language. However, you can also think of primitives as being passed by value and objects being passed by reference.
+
+This is somehow correct and fair enough you can read about JavaScript passing primitives by value but objects by reference in various online source. However this breads some ambiguity and confussion when comparing the other languages that support so called pass-by-referance mechanism, which JavaScript doesn't.
+
+## Pass by reference
+
+So what's a pass by reference in more general view? It's a mechanism of passing arguments to the function. It allows to pass a referance to a value and also allows the function to modify the reference itself. Let's have a look at a classical example of swapping variables in C++:
+
+```cpp
+#include <cstdio>
+
+void swap(int& x, int& y) {
+  int z = x;
+  x = y;
+  y = z;
+}
+
+int main() {
+  int pizzaPrice = 20, burgerPrice = 12;
+
+  printf("pizza %d$, burger %d$\n", pizzaPrice, burgerPrice);
+  // pizza 20$, burger 12$
+
+  swap(pizzaPrice, burgerPrice);
+
+  printf("pizza %d$, burger %d$\n", pizzaPrice, burgerPrice);
+  // pizza 12$, burger 20$
+
+  return 0;
+}
+```
+
+You can't really do that in JavaScript. There is no way for a function in JavaScript to modify it's arguments values so the calling code would see the modified value as it happened with `swap` function and `pizzaPrice` and `burgerPrice` variables in the C++ example above.
+
+For promitive values this is very apparent, but one could argue that a JavaScript function can modify it's argument's value when the argument is an object. Indeed we can alter object properties in a function and that modification will be visible to the calling code. However, we still can't modify the actual value of the argument, which is a referance to that object. We can only dereference object (happens automatically in JS) which means, we can exchange the reference identifier for the actual object value from the heap. But that's just how references work right? There might be multiple references that point to a single object in the memory, if we use one of it to modify the object, all other references still can be used to access it's new modified value. This it independend of pass-by-value vs pass-by-reference mechanics.
+
+Does the lack of pass-by-reference make JavaScript a worse language? Not really, if anything one could argue that using pass-by-reference only adds confusion as it's not clear from the caller's perspective if the function might modify the arguments or not. Even if a language supports it, it's better to not overuse it. In fact, just like JavaScript many modern languages do not support pass-by-reference.
+
+Let's have a look at some examples.
+
+## Example of languages that pass by value only
+
+First, some much needed clarification, since we'll be looking at multiple languages. The term _reference_ might mean slightly different things in different languages. It generally means an identifier, which allows different variables to access the same value stored in memory.
+
+### Reference vs pointer
+
+There is a difference between a pointer and a reference, at least in languages that support both like C++. Fortunatelly, most languages only have one concept of a referance. It generally means an identifier, which allows different variables to access the same value stored in memory.
+
+So what are pointers? Well a pointer is a variable holds the memory address of a value. Pretty much the same as reference right? Yes, sort of, references in languages like JavaScript, Java or Python do hold the memory address of a value just like pointers do in languages like C, C++ or Go. The difference is that pointers usually mean something that is a first class citizen in a language. Pointers have a type and can be passed as values, and in some languages like C/C++ coerced and modified (pointer arthmentic). References on the other hand are somehow hidden and automatic, they do not have a specific type nor can be modified or even easily seen.
+
+By what about references in C++? Since it already has pointers that hold the memory address of a value why it also has references? Without going into much details, it has references out of convenience. C++ references are a bit easier to work with compared to pointers where you need to specifally dereference to access the value etc. Contrary to pointers and to refrences in languages like JavaScript, references in C++ do not really exist at runtime, they are not values in the memory, just a language syntax. It's best to think of C++ references as aliases, additonal name for the same variable.
+
+<!-- TODO: rewrite  -->
+
+Most languages use references. References do not expose the same raw memory addresses as pointers. References may be implemented as pointers, but should not be manipulated as in C pointers.
+
+### JavaScript
+
+Yeap, no surprises here, JavaScript passes by value only.
+
+### Java
+
+Java and other JVM languages like Kotlin, Clojure, Scala are all pass-by-value languages.
+
+### C and Objective C
+
+C (and Objective C for that matter) passes everything by value, this value can be a pointer, some call it "pass by pointer" or "pass by address". Pass-by-reference semantic in not there as it's not possible for the function to change the argument value for it be visible for the caller, however the pointer dereference operator allows us to achieve similar result, for example to implement the `swap(int *a, int *b)` function.
+
+### Go
+
+Go is similar to C in this regard, it's a pass-by-value language, but the value itself can be a pointer.
+
+### Python
+
+Python passes everything by value, but the value itself is always a referance to an object. In Python every value is an object. immutable object types like `int` or `string` behave like primitive values in JavaScript, they can't be modified. Mutable object types like lists and dictionaries behave like JavaScript object, when passed as an argument, the function can modify the object's content.
+
+### Ruby
+
+Ruby passes everything by value, however the value is always a reference.
+
+### Dart
+
+Dart, similarly to JavaScript passes everything by value, however every value is a reference to an object, as everything in Dart is an object. For example number `5` is an object with it's own methods and parameters, like `5.toString(); 5.isEven;`. However simple types as numbers, are immutable and canonicalized (`identical(5, 5) == true`) thus similarly to JavaScript variables of these types can't be modified.
+
+Common Lisp is similar to JavaScript, pass by value for simple values like number, but the value can be a reference if an argument is a more complex structure.
+
+## Examples of languages that support pass by reference
+
+### Pascal
+
+Pascal passes by value by default, but can also pass by reference using the `var` syntax.
+
+### PHP
+
+PHP passes by value by default, but can also pass by reference using the `&` syntax.
+
+### VisualBasic
+
+VisualBasic supports both pass-by-value and pass-by-reference using ByVal or ByRef keyword in the procedure declaration. If a parameter is declared with ByRef, the calling code can force the mechanism to ByVal by enclosing the argument name in parentheses in the call.
+
+### C++
+
+C++ passes by value by default, but can also pass by reference using the `&` syntax.
+
+### C#
+
+C# passes by value by default, this value will be a reference for the reference types (strings, objects, arrays etc). Additionally, we can pass arguments by reference using the `ref` keyword.
+
+F#
+
+### Swift
+
+Swift, passes everything by value, including the references values, much like Java and JavaScript. However, it's possible for the value to be copied back to the caller usign the `inout` keyword in function's parameter declaration allowing for argument's modification by the function. It's not exaclty pass-by-reference nor dereferencing pointers semantic as the value is just copied again, not modified in place but allows for similar use.
+Additionally, Swift support the use of pointers (e.g. `UnsafeMutablePointer`) to allow for interoperability with Objective C.
+
+<!-- TODO: rewrite -->
+
+As an optimization, when the argument is a value stored at a physical address in memory, the same memory location is used both inside and outside the function body. The optimized behavior is known as call by reference; it satisfies all of the requirements of the copy-in copy-out model while removing the overhead of copying. Write your code using the model given by copy-in copy-out, without depending on the call-by-reference optimization, so that it behaves correctly with or without the optimization.
+
+### Fortran
+
+Fortran passes everything by reference, in Fortran 95 you can use nonstandard extension %VAL() or `value` attribute in Fortran 2003
+
+### Rust
+
+Rust is an interesting one, it allows for pass-by-value and pass-by-reference, but the semantics are quite bit different from let's say C++ that pass-by-reference is not a good term. Types that implement the Copy trait (primitives, immutable references etc) will be copied when passed as arguments. &mut is closest to pass-by-reference but is more restrictive due to the borrowing in Rust
+
+I think in C#, which supports pass-by-reference the semantic disctintion between pass-by-value and pass-by-reference is the most clear. In C# all fundamental data types like numbers, booleans, structs, and enums are so called value types. On the other hand, strings, objects and arrays
+would be a reference types. By default everything is passed by value like in JavaScript and the value is a reference for all the reference types. However you can specify arguments to be passed by reference using keyword `ref` in the function signature. If the keyword `ref` proceeds the parameters in the function definiton it will be passed by reference, regardless of it's type. So in C# both value types and reference types (references to objects etc) can be passed by either value or by reference. This clearly illustrates the difference, a reference is a value that aliases/points to the variable in memory, while pass-by-reference is a mechanism of passing arguments to functions.
+
+In pure functional languages like Haskell, Elm or PureScript variables are immutable, so it's not possible to assign a new value to a variable that has already been initialized with a different value. Moreover functions do not have side-effects, at least not in direct way (see Monads) so there is not much point in discussing these languages in pass-by-value vs pass-by-reference fashion.
+
+## Comparing values
 
 ```javascript
 const pizza = "pizza";
@@ -35,36 +238,19 @@ samePizza === pizza;
 // false
 ```
 
-
-
-So when you are moving values arround in you code their value is always copied. For example when you assign your value to another variable or pass it as an argument to a function, it will get copied. This works great, but the more copies they are the more memory your program will use. This is not a problem for primitive values like string `"pizza"` or a number `123` or even a number `123456789` :D. But because objects can contain other object and primitives, always coping them by value would be both CPU and memory heavy, so JavaScript does not store object's values in the variable directly. Just a reference.
-
-How the reference looks like> If you look at chrome dev tools mem snapshot (?) it looks sth like that `@1231231`. Just a number, that represents where the value is stored. Similar to a key in a hash table or dictionary structure.
-
-Other languages give the developer control over when to pass the value (including objects) by reference or by value (a copy). JavaScript does not. It always passes any value as a value and thus making a copy. However, for objects the value is always a reference to the actual object, not the object itself. When you access the object by using a variable like in `let o = { v: 1 }; o.1;` JavaScript is dereferencing the reference `o` to access the object value.
-
-Ok that's how primitives and Objects and handled but what about arrays and functions? Well, both arrays and functions are also objects in JavaScript. 
+Ok that's how primitives and Objects and handled but what about arrays and functions? Well, both arrays and functions are also objects in JavaScript.
 
 TODO Picture
-
 
 https://en.wikipedia.org/wiki/String_interning
 https://softwareengineering.stackexchange.com/questions/325811/memory-usage-of-javascript-string-type-with-identical-values
 
-
-
 Key points
+
 - variables are always passed by value (https://en.wikipedia.org/wiki/Evaluation_strategy#Call_by_sharing)
 
 - `==`, `===`, and `Object.is()` compare by value
 - for primitives variables store their value
 - for objects variables do not store value, but a reference to a value
 
-
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-
-
-
-https://dave.cheney.net/2017/04/29/there-is-no-pass-by-reference-in-go
-https://stackoverflow.com/questions/27879068/why-do-programmers-say-that-pass-by-reference-is-really-passing-references-by
-https://stackoverflow.com/questions/518000/is-javascript-a-pass-by-reference-or-pass-by-value-language

@@ -1,0 +1,36 @@
+---
+title: How to use objects in JavaScript
+description: 
+date: 2021-02-05 11:00
+---
+
+
+## Values in JavaScript
+
+In JavaScript you come accross two kind of values, primitive values and objects. The primitive values are basic things like numbers and strings. In total there are 7 primitive types of values in JavaScript: 
+
+- null
+- undefined
+- number, including Infinity, -Infinity and NaN
+- bigint
+- string
+- boolean (`true` or `false`)
+- symbol
+
+
+Objects on the other hand are a compound data structures. We can use a JavaScript object as an unordered collection of properties. A property is basically a named value, in other words a mapping between a name and a value. The concept of objects in programming mimics how we think about objects in real life. If we'd think about a pizza as an object we can quickly come up with some of it's properties like size, price, name or list of toppings. 
+
+What's your favorite pizza :)? Mine is the Tuna Mayo (I know...). We can easily define a specific pizza as a JavaScript object by giving all the pizza properties values: 
+
+```javascript
+let pizza = {
+  name: "Tuna Mayo",
+  size: "Large",
+  price: 18,
+  toppings: ['tuna', 'mayonnaise', 'cheese', 'corn'];
+};
+```
+
+The property name can be a string or symbol, and anything that can be converted to a string, which means that basicically any primitive value. The value can be a primitive or any other object, including arrays and functions. Arrays and Functions in JavaScript are also objects.
+
+As you can see creating objects in JavaScript is very simple and contrary to some other programming languages we don't have to define the object class (or type) first, not it's constructor method. Because of this we can use JavaScript objects as a map/dictionary data structure, not just as a means of abstracting data and structuring our code with class instances. JavaScript developers would also use objects where Python developers would've use a dictionary, PHP developers an associative array and Java developers a HashMap, etc.

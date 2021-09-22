@@ -46,8 +46,11 @@ const AboutPage = ({ data: { profile } }) => {
         </ProfileImage>
         <ProfileText>
           <h1>Hi, I'm Tomek.</h1>
-          <p>I’m a full-stack engineer from Poland. </p>
-          <p>I currently work and live in Tokyo, Japan.</p>
+          <p>I’m a full-stack engineer from Poland.</p>
+          <p>
+            I have also worked and lived in New Zealand, Japan and Australia. I
+            currently work as a Performance Engineer at Canva (Sydney).
+          </p>
           <p>
             I started coding over 15 years ago and I don’t feel like stopping. I
             enjoy building web and mobile apps in React.js and React Native,

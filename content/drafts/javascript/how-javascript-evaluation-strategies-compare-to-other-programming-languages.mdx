@@ -1,0 +1,247 @@
+---
+title: How JavaScript evaluation strategies compare to other programming languages
+# Comparision of evaluation strategies in different programming languages
+description:
+date: 2021-05-20 11:00
+---
+
+What is an evaluation strategy? Well, an evaluation strategy is all about what happens with arguments during a function call. It defines when the arguments are evaluated as well as what they are evaluated into, namely a value or a reference.
+
+In practice we can think of two such strategies. One is to completelly evaluate the arguments' expressions before the function itself gets applied, which is called a strict evaluation. The other strategy is to not evaluate the arguments' expressions until they are actually used in the function body. This one is called (who would have guessed) a non-strict evaluation.
+
+JavaScript, like most modern languages uses a strict evaluation strategy and it passes arguments by value. But let's not get ahead of ourselved too much just yet. Before we get into evaluation strategies of different programming languages let's start with explaining some core concepts a bit more.
+
+## Strict evaluation
+
+Strict or "eager" evaluation strategy means that all function's arguments are completelly evaluated before the funtion is applied. Vast majority of languages use this strategy.
+
+Strict evaluation comes in two flavours:
+
+- pass by value (or call by value), and
+- pass by reference (or call by reference).
+
+In pass by value evaluation strategy the argument is evaluated into a value. In other words the value passed by a function caller as an argument gets copied and made available to the function. This is a defacto copy, so it's value is stored in a different memory address. Since it's a copy, all the modifications done to the argument's value by the function will not be visible to the caller.
+
+Just like in this example below, the value of variable `age` resides in different place in the memory than the value of argument `x`. Even though we modify the argument `x` the value of `age` is still the same.
+
+```javascript
+function inc(x) {
+  x = x + 1;
+  return x;
+}
+
+let age = 25;
+let older = inc(age);
+console.log(older);
+// 26
+console.log(age);
+// 25
+```
+
+Pass by reference evaluation strategy on the other hand allows the caller to pass an expression that get evaluated to a reference instead of a value. This means that there are no copies being made, instead the argument contains a reference that points to where the passed value is located in the memory.
+
+Let's have a look at the example in C++, which is one of the languages that support pass by reference evaluation strategy. Just like in the JavaScript example above the `inc()` function modifes the value of the `x` argument. However, this time, the change is visible for the calling code and the value of `age` itself gets modified.
+
+```cpp
+#include <cstdio>
+
+void inc(int& x) {
+  x = x + 1;
+}
+
+int main() {
+  int age = 25;
+
+  inc(age);
+
+  printf("%d", age);
+  // 26
+  return 0;
+}
+```
+
+## Non-strict evaluation
+
+Non-strict evaluation doesn't evaluate the expression immediatelly, only when it's actually used. There are few variants of non-strict evaluation strategies being used by programming languages:
+
+- call by macro expansion
+- call by name
+- call by need (lazy evaluation)
+
+The simplest (and also the most generic and powerful) example of non-strict evaluation is call by macro expansion. For example in C you can define a named block of code, a macro, that you can use in other parts of your code. Much like a function, but contrary to the function macro is not exacutable (it doesn't exist in a running programme) but it's contents is used for a simple textual find and replace done by the C preprocessor. Much like copy and paste, just automated. This may lead to unintended variable name collisions and shadowing if programmer is not careful. This is why some languages (like Rust) use less-powerful but safer alternative called hygenic macros.
+
+But let's focus on the evaluation of function arguments. As we already know, non-strict evaluation does not evaluate arguments immediatelly. Instead, the expression from the argument gets substituted into the function's body. Much like the macros, but it's not a simple textual replacement, rather a capture-avoiding substitution. By using capture-avoiding substitution we can be sure that the expressions we've replaced our arguments with do not cause any variable naming collisions.
+
+Definition: In Lambda calculus, capture-avoiding substitution are substitutions which avoid accidentally capturing (or binding) previously free variables. https://en.wikipedia.org/wiki/Lambda_calculus#Capture-avoiding_substitutions
+
+Functional languages use this safe, capture-avoiding substitution to implement the call-by-name and call-by-need evaluation strategies. Call by name allows for argument's expression to be evaluated only when it's actually used. Call by need is similar to call-by-name strategy, but it uses memoization to avoid unnecessary evaluation. It only evalutes the argument's expression once, even if it's used in the function's body multiple times. Call-by-name on the other hand always evaluates the expression, even if used multiple times.
+
+Let's have a look at a basic comparison of JavaScript's strict, pass-by-value evaluation and Haskell's non-strict call-by-name evaluation.
+
+I've defined an `inc(x, y)` function that returns a sum of `x` and `y` if `x` is greated than `0`, and `x` value increased by `1` otherwise.
+
+```javascript
+function inc(x, y) {
+  return x > 0 ? x + y : x + 1;
+}
+
+inc(1, 2); // 3
+inc(0, undefined[0]); // TypeError: Cannot read property '0' of undefined
+```
+
+No surprises here the `inc(1, 2)` call returns `3`. Also no suprises that making an oopsie like accessing first element of "non-exisitng" array throws an error. Since JavaScript uses strict evaluation strategy the expression `undefined[0]` is evaluated immediatelly and the `inc()` is not even called.
+
+Ok, so let's try a very similar example in Haskell:
+
+```haskell
+inc x y =
+  if x > 0 then x + y else x + 1
+
+main = do
+  print (inc 1 2) -- prints 3
+  print (inc 0 (3 `div` 0)) -- prints 1, no error
+```
+
+Same as in JavaScript a simple call like `inc 1 2` returns `3`. But what about the next line? We're actually making a very well known oopsie here, with `` 3 `div` 0 `` we're trying to divide by zero (the `div` function performs an integer division in Haskell). However, the code works just fine! What's going on here?
+
+Well... if we look closely at the `inc x y` function definition we notice that if the `x` argument is `0` then it simply returns `x + 1`. The function doesn't need to know what the value of `y` argument is. And because Haskell uses call-by-name evaluation it doesn't even need to evaluate the expression passed as `y` parameter. Thus our oopsie `` 3 `div` 0 `` never gets evaluated and we don't get the `divide by zero` error.
+
+Fair enough if we call the function with `x` greated than `0` the `y`'s expression gets evaluated and we get an error:
+
+```haskell
+print (inc 1 (3 `div` 0)) -- main: divide by zero
+```
+
+Why non-strict evaluation is useful? For two reasons really. Firstly arguments values might not be always used by the function so avoiding needleass computation is good for performance. Second and the main one is that non-strict evaluation allows for lazy evaluation. Lazy evaluation makes it possible to do some really cool stuff like defining infinite data structures. Head to #Call-by-need for more in depth explanation and an example.
+
+However it comes with some bookeeping overhead compared to strict evaluation. So sometimes it's faster to just evaluate the expression immediatelly even though some of them will end up not being used. Also it's not hard to implement lazy evaluation in strictly evaluated langauges by wrapping exrepssions in functions or classes and passing these as arguments. Some languages (like JavaScript lol) also support generators.
+
+<!-- Pros vs Cons of non-stict evaluation -->
+
+https://softwareengineering.stackexchange.com/questions/124500/why-isnt-lazy-evaluation-used-everywhere
+
+## References vs pointers
+
+
+
+First, some much needed clarification, since we'll be looking at multiple languages. The term _reference_ might mean slightly different things in different languages. It generally means an identifier, which allows different variables to access the same value stored in memory.
+
+There is a difference between a pointer and a reference, at least in languages that support both like C++. Fortunatelly, most languages only have one concept of a referance. It generally means an identifier, which allows different variables to access the same value stored in memory.
+
+So what are pointers? Well a pointer is a variable holds the memory address of a value. Pretty much the same as reference right? Yes, sort of, references in languages like JavaScript, Java or Python do hold the memory address of a value just like pointers do in languages like C, C++ or Go. The difference is that pointers usually mean something that is a first class citizen in a language. Pointers have a type and can be passed as values, and in some languages like C/C++ coerced and modified (pointer arthmentic). References on the other hand are somehow hidden and automatic, they do not have a specific type nor can be modified or even easily seen.
+
+By what about references in C++? Since it already has pointers that hold the memory address of a value why it also has references? Without going into much details, it has references out of convenience. C++ references are a bit easier to work with compared to pointers where you need to specifally dereference to access the value etc. Contrary to pointers and to refrences in languages like JavaScript, references in C++ do not really exist at runtime, they are not values in the memory, just a language syntax. It's best to think of C++ references as aliases, additonal name for the same variable.
+
+<!-- TODO: rewrite  -->
+
+Most languages use references. References do not expose the same raw memory addresses as pointers. References may be implemented as pointers, but should not be manipulated as in C pointers.
+
+## Pass by value
+
+When assigning a value to a variable or passing a value as a function argument JavaScript copies the value. The primitive value is copied and the reference is copied. This is why JavaScript can be refered as a pass-by-value language. However, you can also think of primitives as being passed by value and objects being passed by reference.
+
+This is somehow correct and fair enough you can read about JavaScript passing primitives by value but objects by reference in various online source. However this breads some ambiguity and confussion when comparing the other languages that support so called pass-by-referance mechanism, which JavaScript doesn't.
+
+
+### JavaScript
+
+Yeap, no surprises here, JavaScript passes by value only.
+
+### Java
+
+Java and other JVM languages like Kotlin, Clojure, Scala are all pass-by-value languages.
+
+### C and Objective C
+
+C (and Objective C for that matter) passes everything by value, this value can be a pointer, some call it "pass by pointer" or "pass by address". Pass-by-reference semantic in not there as it's not possible for the function to change the argument value for it be visible for the caller, however the pointer dereference operator allows us to achieve similar result, for example to implement the `swap(int *a, int *b)` function.
+
+### Go
+
+Go is similar to C in this regard, it's a pass-by-value language, but the value itself can be a pointer.
+
+### Python
+
+Python passes everything by value, but the value itself is always a referance to an object. In Python every value is an object. immutable object types like `int` or `string` behave like primitive values in JavaScript, they can't be modified. Mutable object types like lists and dictionaries behave like JavaScript object, when passed as an argument, the function can modify the object's content.
+
+### Ruby
+
+Ruby passes everything by value, however the value is always a reference.
+
+### Dart
+
+Dart, similarly to JavaScript passes everything by value, however every value is a reference to an object, as everything in Dart is an object. For example number `5` is an object with it's own methods and parameters, like `5.toString(); 5.isEven;`. However simple types as numbers, are immutable and canonicalized (`identical(5, 5) == true`) thus similarly to JavaScript variables of these types can't be modified.
+
+Common Lisp is similar to JavaScript, pass by value for simple values like number, but the value can be a reference if an argument is a more complex structure.
+
+## Pass by reference
+
+So what's a pass by reference in more general view? It's a mechanism of passing arguments to the function. It allows to pass a referance to a value and also allows the function to modify the reference itself. Let's have a look at a classical example of swapping variables in C++:
+
+You can't really do that in JavaScript. There is no way for a function in JavaScript to modify it's arguments values so the calling code would see the modified value as it happened with `swap` function and `pizzaPrice` and `burgerPrice` variables in the C++ example above.
+
+For promitive values this is very apparent, but one could argue that a JavaScript function can modify it's argument's value when the argument is an object. Indeed we can alter object properties in a function and that modification will be visible to the calling code. However, we still can't modify the actual value of the argument, which is a referance to that object. We can only dereference object (happens automatically in JS) which means, we can exchange the reference identifier for the actual object value from the heap. But that's just how references work right? There might be multiple references that point to a single object in the memory, if we use one of it to modify the object, all other references still can be used to access it's new modified value. This it independend of pass-by-value vs pass-by-reference mechanics.
+
+Does the lack of pass-by-reference make JavaScript a worse language? Not really, if anything one could argue that using pass-by-reference only adds confusion as it's not clear from the caller's perspective if the function might modify the arguments or not. Even if a language supports it, it's better to not overuse it. In fact, just like JavaScript many modern languages do not support pass-by-reference.
+
+Let's have a look at some examples.
+
+### Pascal
+
+Pascal passes by value by default, but can also pass by reference using the `var` syntax.
+
+### PHP
+
+PHP passes by value by default, but can also pass by reference using the `&` syntax.
+
+### VisualBasic
+
+VisualBasic supports both pass-by-value and pass-by-reference using ByVal or ByRef keyword in the procedure declaration. If a parameter is declared with ByRef, the calling code can force the mechanism to ByVal by enclosing the argument name in parentheses in the call.
+
+### C++
+
+C++ passes by value by default, but can also pass by reference using the `&` syntax.
+
+### C#
+
+C# passes by value by default, this value will be a reference for the reference types (strings, objects, arrays etc). Additionally, we can pass arguments by reference using the `ref` keyword.
+
+F#
+
+### Swift
+
+Swift, passes everything by value, including the references values, much like Java and JavaScript. However, it's possible for the value to be copied back to the caller usign the `inout` keyword in function's parameter declaration allowing for argument's modification by the function. It's not exaclty pass-by-reference nor dereferencing pointers semantic as the value is just copied again, not modified in place but allows for similar use.
+Additionally, Swift support the use of pointers (e.g. `UnsafeMutablePointer`) to allow for interoperability with Objective C.
+
+<!-- TODO: rewrite, copied -->
+
+As an optimization, when the argument is a value stored at a physical address in memory, the same memory location is used both inside and outside the function body. The optimized behavior is known as call by reference; it satisfies all of the requirements of the copy-in copy-out model while removing the overhead of copying. Write your code using the model given by copy-in copy-out, without depending on the call-by-reference optimization, so that it behaves correctly with or without the optimization.
+
+### Fortran
+
+Fortran passes everything by reference, in Fortran 95 you can use nonstandard extension %VAL() or `value` attribute in Fortran 2003
+
+### Rust
+
+Rust is an interesting one, it allows for pass-by-value and pass-by-reference, but the semantics are quite bit different from let's say C++ that pass-by-reference is not a good term. Types that implement the Copy trait (primitives, immutable references etc) will be copied when passed as arguments. &mut is closest to pass-by-reference but is more restrictive due to the borrowing in Rust
+
+I think in C#, which supports pass-by-reference the semantic disctintion between pass-by-value and pass-by-reference is the most clear. In C# all fundamental data types like numbers, booleans, structs, and enums are so called value types. On the other hand, strings, objects and arrays
+would be a reference types. By default everything is passed by value like in JavaScript and the value is a reference for all the reference types. However you can specify arguments to be passed by reference using keyword `ref` in the function signature. If the keyword `ref` proceeds the parameters in the function definiton it will be passed by reference, regardless of it's type. So in C# both value types and reference types (references to objects etc) can be passed by either value or by reference. This clearly illustrates the difference, a reference is a value that aliases/points to the variable in memory, while pass-by-reference is a mechanism of passing arguments to functions.
+
+## Call by need
+
+In pure functional languages like Haskell, Elm or PureScript variables are immutable, so it's not possible to assign a new value to a variable that has already been initialized with a different value. Moreover functions do not have side-effects, at least not in direct way (see Monads) so there is not much point in discussing these languages in pass-by-value vs pass-by-reference fashion.
+
+JavaScript doesn't support non-strict evaluation, however it's possible to implement lazily
+
+You can say that in languages that support lazy evaluation you could say that every argument passed in call by need fashion is a generator.
+
+pros vs cons of lazy evaluation: https://softwareengineering.stackexchange.com/questions/124500/why-isnt-lazy-evaluation-used-everywhere
+
+
+<!-- TODO: example of lazy evaluation in js using callback or generators -->
+
+https://medium.com/hackernoon/lazy-evaluation-in-javascript-84f7072631b7
+
+### ALGOL 60
+
+### Scala

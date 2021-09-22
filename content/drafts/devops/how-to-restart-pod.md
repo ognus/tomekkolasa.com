@@ -1,5 +1,6 @@
 ---
 title: How to restart a pod in Kubernetes
+date: 2020-10-29 09:00
 description: ""
 ---
 

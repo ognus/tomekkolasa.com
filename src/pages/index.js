@@ -23,7 +23,7 @@ const BlogIndex = ({ data }) => {
             <h1>Hi, I’m Tomek.</h1>
           </Bio>
         </header>
-        <p>I'm a Full-Stack Developer who lives in Tokyo.</p>
+        <p>I'm a Full-Stack Developer.</p>
         <p>
           This blog is a deep dive into a full-stack JavaScript ecosystem. From
           frontend development through the backend, DevOps, and finally remote
