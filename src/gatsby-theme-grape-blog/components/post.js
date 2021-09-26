@@ -20,6 +20,10 @@ const SocialSection = styled.section`
   strong {
     font-size: ${theme.fontSizes[0]};
   }
+
+  @media print {
+    display: none;
+  }
 `
 
 export const Post = ({ data: { mdx: post } }) => {

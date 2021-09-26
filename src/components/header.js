@@ -13,6 +13,10 @@ const StyledHeader = styled.header`
   align-items: center;
   box-shadow: 0 5px 20px -15px ${theme.colors.shadow};
   transition: background-color 0.2s ease-in-out;
+
+  @media print {
+    padding: 1rem 0;
+  }
 `
 
 const HeaderContent = styled.div`
@@ -21,6 +25,10 @@ const HeaderContent = styled.div`
   align-items: center;
   margin: 0 auto;
   max-width: ${theme.sizes.pageWidth};
+
+  @media print {
+    max-width: 90%;
+  }
 `
 
 const ImageLink = styled(Link)`
@@ -37,6 +45,9 @@ const StyledMenu = styled(Menu)`
 
 const StyledThemeToggle = styled(ThemeToggle)`
   margin-left: auto;
+  @media print {
+    display: none;
+  }
 `
 
 export const Header = () => {

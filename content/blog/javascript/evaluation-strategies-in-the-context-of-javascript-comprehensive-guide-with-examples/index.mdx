@@ -112,7 +112,13 @@ Macros are a powerful and useful mechanism but let's focus on the evaluation of 
 
 It's not a simple textual replacement, however, but rather a capture-avoiding substitution. By using capture-avoiding substitution we can be sure that the expressions we've replaced our arguments with do not cause any variable naming collisions.
 
-<Block cite="https://en.wikipedia.org/wiki/Lambda_calculus#Capture-avoiding_substitutions">
+<Block
+  cite={
+    <a href="https://en.wikipedia.org/wiki/Lambda_calculus#Capture-avoiding_substitutions">
+      Wikipedia
+    </a>
+  }
+>
   <strong>Definition:</strong> In Lambda calculus, capture-avoiding
   substitutions are substitutions that avoid accidentally capturing (or binding)
   previously free variables.
@@ -124,7 +130,7 @@ Functional languages use this safe, capture-avoiding substitution to implement t
 
 Call by need, also known as lazy evaluation is similar to the call-by-name strategy, but it uses memoization to avoid unnecessary evaluation. It only evaluates the argument's expression once, even if it's used in the function's body multiple times. Call-by-name on the other hand evaluates the expression each time.
 
-<Block cite="https://en.wikipedia.org/wiki/Memoization">
+<Block cite={<a href="https://en.wikipedia.org/wiki/Memoization">Wikipedia</a>}>
   <strong>Definition:</strong> Memoization is an optimization technique used to
   speed up programs by storing the results of expensive function calls and
   returning the cached result when the same inputs occur again.

@@ -16,6 +16,9 @@ const List = styled.ul`
 
   svg {
     margin-right: 0.2rem;
+    @media print {
+      display: none;
+    }
   }
 `
 

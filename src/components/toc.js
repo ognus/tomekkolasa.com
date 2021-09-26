@@ -1,5 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
+import { theme } from "../theme"
 
 const TableOfContents = styled.aside`
   border-left: 6px solid #f5f2f0;
@@ -16,7 +17,8 @@ const TableOfContents = styled.aside`
     &::before {
       counter-increment: section;
       content: counters(section, ".") ". ";
-      width: 1.75rem;
+      font-family: ${theme.fonts.code.join(",")};
+      padding-right: 0.5rem;
       display: inline-block;
     }
 

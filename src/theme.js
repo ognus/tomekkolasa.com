@@ -6,7 +6,7 @@ const COLORS = {
   PURPLE: "#7b1fff",
   PURPLE_DIM: "#442e63",
   GRAY_DARK: "#282936",
-  GRAY_LIGHT: "#eeeeee"
+  GRAY_LIGHT: "#eeeeee",
 }
 
 const dark = toCSSVars({
@@ -48,6 +48,14 @@ export const theme = {
       "sans-serif",
     ],
     heading: ["Raleway", "sans-serif"],
+    code: [
+      "PT Mono",
+      "Consolas",
+      "Monaco",
+      "Andale Mono",
+      "Ubuntu Mono",
+      "monospace",
+    ],
   },
 
   fontSizes: [

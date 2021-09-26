@@ -16,6 +16,10 @@ const Tweetable = styled.div`
   svg {
     margin-right: 0.2rem;
   }
+
+  @media print {
+    display: none;
+  }
 `
 
 export const Block = ({

@@ -24,13 +24,20 @@ const Main = styled.main`
   margin: 0 auto;
   padding: 2rem;
   max-width: ${theme.sizes.contentWidth};
+
+  @media print {
+    max-width: 90%;
+  }
 `
 
 const Footer = styled.footer`
   flex-shrink: 0;
-  margin-top: 5rem;
   margin-bottom: 1rem;
   text-align: center;
+
+  @media screen {
+    margin-top: 5rem;
+  }
 `
 
 const Layout = ({ children }) => {

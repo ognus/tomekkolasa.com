@@ -34,6 +34,38 @@ export const blockquote = css`
 `
 
 export const global = css`
+  @page {
+    size: 210mm 297mm;
+    margin: 18mm 12mm 18mm 12mm;
+  }
+
+  @media print {
+    a[href*="://"]:after
+    {
+      content: " [" attr(href) "] ";
+    }
+
+    img,
+    svg,
+    table,
+    tr,
+    footer,
+    blockquote,
+    .gatsby-highlight,
+    .gatsby-resp-image-wrapper {
+      break-inside: avoid;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      break-after: avoid;
+    }
+  }
+
   html {
     font-size: ${theme.baseSize[0]};
     font-family: ${theme.fonts.body.join(",")};
@@ -42,7 +74,7 @@ export const global = css`
     text-rendering: optimizelegibility;
     -webkit-font-smoothing: antialiased;
 
-    @media (min-width: ${theme.sizes.contentWidth}) {
+    @media screen and (min-width: ${theme.sizes.contentWidth}) {
       font-size: ${theme.baseSize[1]};
     }
   }
@@ -109,6 +141,10 @@ export const global = css`
   ol,
   div {
     font-size: ${theme.baseSize[1]};
+
+    @media print {
+      font-size: ${theme.baseSize[0]};
+    }
   }
 
   ul {
@@ -167,7 +203,9 @@ export const global = css`
   }
 
   .gatsby-highlight {
-    ${wide};
+    @media screen {
+      ${wide};
+    }
 
     pre[class*="language-"] {
       padding: 2rem;

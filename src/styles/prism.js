@@ -10,6 +10,7 @@
  * @license MIT 2016-2020
  */
 import { css } from "@emotion/react"
+import { theme } from "../theme"
 
 export const prism = css`
   .dark {
@@ -200,8 +201,7 @@ export const prism = css`
     color: var(--foreground);
     background: var(--background);
     text-shadow: none;
-    font-family: PT Mono, Consolas, Monaco, "Andale Mono", "Ubuntu Mono",
-      monospace;
+    font-family: ${theme.fonts.code.join(",")};
     text-align: left;
     white-space: pre;
     word-spacing: normal;
