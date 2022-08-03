@@ -1,0 +1,192 @@
+---
+title: How to make HTTP requests in JavaScript and NodeJS
+---
+
+In this post we will go through most of the ways you can send HTTP requests from the JavaScript code, both in the browser and the NodeJS runtime. We'll have a deeper look at each one of them, where I'll explain the code examples and discuss the pros and cons of the solution.
+
+## Natively supported
+
+Let's start with JavaScript in the browser enviornment first. It provides us with two build-in ways to send a HTTP request. The older **XMLHttpRequest** object and the newer **Fetch API**. Although is prefferable to use the newer Fetch API, you still might need to work with XMLHttpRequest when dealing with older codebases or ancient browsers 😉
+
+### Node.js HTTP API
+
+Node.js also offers the ability to send HTTP requests without any external libraries.
+
+In Node.js, you can use the build-in `http` (or `https`) client to make HTTP(S) requests. The `http` module uses Node's stream interface, which makes is very convenient when working with other steam-enabled SDKs like for example file access for downloading or uploading files. However, it feels quite verbose when all we need is a simple POST request. In fact to support a full range of possible HTTP use-cases, developers purposfully made the Node.js `http` client low-level. Beside the stream support it mostly just provides a basic HTTP message parsing.
+
+Similarly to when using the XMLHttpRequest object in the browser we'll need to use `JSON.stringify()` to convert the object data to a JSON string we'll be sending in a POST request. We'll also use `JSON.parse()` to parse the JSON string from the server's response into an object so we can read the `token` value.
+
+Let's have a look at the example. It creates a POST request that sends user's email and password to the `https://example.com/login` endpoint:
+
+```javascript
+const https = require("https");
+
+const data = { email: "goku@capsule.corp", password: "kamehameha" };
+
+const url = new URL("https://example.com/login");
+const options = {
+  headers: { "Content-Type": "application/json" },
+};
+
+const req = https.request(url, options, (response) => {
+  let responseData = "";
+  response.on("data", (chunk) => {
+    // drain the stream data into a string, so we can parse it later
+    // we could also you an array here and then concatenate it into string using join or Buffer.concat(array).toString()
+    responseData += chunk;
+  });
+  response.on("end", () => {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      // get JSON to get to the auth token
+      const { token } = JSON.parse(responseData);
+    } else {
+      // handle HTTP errors
+      console.log(`HTTP error: ${response.statusCode}`);
+    }
+  });
+});
+
+request.on("error", (err) => {
+  // handle network errors
+  console.log(err);
+});
+
+request.write(JSON.stringify(data));
+request.end();
+```
+
+Both request and response objects are streams. The `request` object returned from the `https.request()` is an instance of the `http.ClientRequest` class which extends `Stream`, making it a writiable stream. We send our JSON login data by writing it to the `request` stream instance using `request.write(JSON.stringify(data))`. This is all we'll send, so we can close the stream by calling `request.end()`.
+To learn more about writing to streams and Node.js streams in general I recommend checking out the [Nodejs.dev guide on streams](https://nodejs.dev/learn/nodejs-streams).
+
+To handle the response we will interact with the `response` stream. We get access to this object in a callback passed in to the `https.request()` call. The `response` is an instance of the `http.IncomingMessage` class, which is a readonly stream, as it extends the `stream.Readable`.
+
+Listen to the `'data'` event.
+
+You can read the response data directly from the stream by listening to the `"data"` and `"end"` events. The `"data"` listener will be called multiple times, each time providing a chunk of response data as a `Buffer` instance. In our case, we know the response should be a JSON string, so we succesivelly concatenate all the chunks into a single string. Alternativelly, we could into collect the chunks in an array. The `"end"` listener will get called once all the response data is consummed. We can use it to parse the response data using `JSON.parse()`, as well as handle error.
+
+Fairly verbose right? Because of that most Node.js developers use external libraries that are much easier to use, like axios or node-fetch. My preference is usually node-fetch as it brings the same Fetch API we can use in the browser into Node.js. It's easier to use a familiar API.
+
+## 3rd party libraries
+
+As we already experienced, working with nativelly supported XMLHttpRequest in the browser and the Node.js's http module is not as convenient as most of us would like. Because of that there has been quite a number of libraries developed to make sending HTTP requests easier. These external libraries aim to be easier to understand, help to implement common tasks with less code or simply to provide additional features. Historically, libraries like jQuery also provided a common abstraction that was hidding any differences between various browers' implementations of XMLHttpRequest.
+
+Before we take a more detailed look at some of the most popular 3rd party libraries for sending HTTP requests, lets have a look at their footprint. External dependencies can quickly add up and make your project grow by additional 10s or 100s of kB. While usually not a major concern in Node.js, it really make a big difference for the browser. JavaScript code takes time to be downloaded, parsed and executed by the browser. So the more JavaScript code there is a page the longer it will take for it to be loaded and displayed to the user. As developers we usually care greatly about the JS code size, incorporating solutions like code minification, compression, tree shaking, as well as code splitting and lazy loading when project grows. I think we should also take great care about what dependencies we include in the project.
+
+So here is the size comparison as of December 2021 (minified and gzipped):
+
+| Library        | Version |                                             Bundle size |
+| -------------- | ------- | ------------------------------------------------------: |
+| **superagent** | 6.1.0   |                                                 10.1 kB |
+| **axios**      | 0.24.0  |                                                  5.6 kB |
+| **ky**         | 0.28.7  |                                                  2.7 kb |
+| **redaxios**   | 0.4.1   | [1 kB](https://bundlephobia.com/package/redaxios@0.4.1) |
+
+### node-fetch
+
+node-fetch is a Node specific npm module that brings the Fetch API to Node.js. It's basically a wrapper around the native `http` module that allows you to send HTTP request the same way as you'd use the browser's `fetch()`.
+
+node-fetch tries to stay consitent with the browser's Fetch API and has only minor differences mostly due to convenience and the server-side nature of the code. You can check all the differences listed on the [node-fetch's Github page](https://github.com/node-fetch/node-fetch/blob/main/docs/v3-LIMITS.md). The most notable difference is that node-fetch supports Node.js streams.
+
+Let's have look at an example how to use streams with node-fetch to upload a file:
+
+```javascript
+let fetch = require('node-fetch');
+let fs = require('fs');
+
+const stats = fs.statSync("foo.txt");
+const fileSizeInBytes = stats.size;
+
+// You can pass any of the 3 objects below as body
+let readStream = fs.createReadStream('foo.txt');
+//var stringContent = fs.readFileSync('foo.txt', 'utf8');
+//var bufferContent = fs.readFileSync('foo.txt');
+
+fetch('http://httpbin.org/post', {
+    method: 'POST',
+    headers: {
+        "Content-length": fileSizeInBytes
+    },
+    body: readStream // Here, stringContent or bufferContent would also work
+})
+```
+
+We can also use streams when sending multipart/form-data requests easily thanks to node-fetch supporting a FormData-like interface:
+
+```javascript
+const form = new FormData();
+
+const buffer = // e.g. `fs.readFileSync('./fileLocation');
+const fileName = 'test.txt';
+
+form.append('file', buffer, {
+  contentType: 'text/plain',
+  name: 'file',
+  filename: fileName,
+});
+
+fetch('https://httpbin.org/post', { method: 'POST', body: form })
+    .then(res => res.json())
+    .then(json => console.log(json));
+```
+
+Personally, I really like the idea behind this small module, as it brings a familiar browser API to the Node.js enviorment. Even if you are familiar with the Node's native `http` module, the least context switching the better. Using a 3rd party module like Axios that supports both the browser and Node.js also comes with this advantage.
+
+### Axios
+
+Axios is a probably the most popular external library for sending HTTP requests. It's havily inspired by AngularJS internal library for HTTP requests. If you ever used old AngularJS's `$http` service you should feel right at home as the API is basically identical. Axios also has all the more advanced goodies like interceptors and transformers. But let's look at a basic example first.
+
+<!-- TODO: add basic Axios example and explain -->
+
+<!-- TODO: add Axios example with interceptors and explain -->
+
+Axios comes with 5.6 extra kilobytes, so if you'd like something more lightweight check out [Redaxios](https://github.com/developit/redaxios). It is a leaner version of Axios by [Jason Miller](https://github.com/developit) - the author of Preactjs. Redaxios strives to offer most of the Axios functionality but will much smaller size (around 1 kB), partly thanks to use the native Fetch API. Not all core Axios features are implemented yet however, most notably the interceptors (see the [Github issue](https://github.com/developit/redaxios/issues/9) for details).
+
+### Superagent
+
+https://github.com/visionmedia/superagent
+
+You might be familiar with superagent if you wrote some E2E REST API tests in Node.js. Many developers use a popular [supertest](https://github.com/visionmedia/supertest) library for testing Node.js HTTP servers. It's a thin wrapper around superagent that makes it easier to make request against the `http.Server` instance and includes a bunch of utility methods to make assertions against the responses. I've used it a lot to test REST API written in Express and it was great. Very easy to block-box test your API endpoints by sending a test request and checking if the response is what you'd expect.
+
+### Got
+
+https://github.com/sindresorhus/got
+
+```javascript
+import ky from "ky";
+
+const data = { email: "goku@capsule.corp", password: "kamehameha" };
+
+const { token } = await ky
+  .post("https://example.com/login", { json: data })
+  .json();
+```
+
+
+
+
+### request and request-promise
+
+Deprecated!
+
+The request is a Node.js module, which together with it's promise enabled request-promise twin were once a very popular option for sending HTTP requests. In fact, it was so nice that many people used it in the browser enviorments via browserify. Since the project is no longer maintained and has been deprecated I'd advise againts using it in any new projects. However, due to it's popularity in the recent past you are quite likely to came across it on some projects.
+
+A basic example of using tthe request module to send a POST request to a `/login` API endpoint looks like that:
+
+```javascript
+const request = require('request');
+request("https://example.com/login", function (error, response, body) {
+  console.error('error:', error); // Print the error if one occurred
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+  console.log('body:', body); // Print the HTML for the Google homepage.
+});
+```
+
+As you can see, the request package uses the old-fashioned callback based design. However, the request-promise package can be used instead to allow for more modern Promise-based design.
+
+Similar `/login` POST request using the Promise API of the request-promise module:
+```javascript
+
+```
+
+## Summary
+

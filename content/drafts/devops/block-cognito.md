@@ -1,4 +1,4 @@
-How to block users after multiple failed login attempts in AWS Cognito.
+How to block users after multiple failed login attempts in AWS Cognito
 
 AWS Cognito is a cloud authentication provider solution similar to OneLogin or Auth0. It’s one of the products in Amazon Web Services cloud platform.
 It offers web and mobile authentication solution package by implementing commonly required components, like user sign-up, sign-in, OAuth2 flows (including support social identity providers such as Facebook and Google), JWT token generation, enterprise identity providers via SAML 2.0, user management and access control.
@@ -39,3 +39,6 @@ However, because calling `adminResetPass` causes Cognito to send a code verifica
 In the Lambda, for each password reset message trigger (trigger source CustomMessage_ForgotPassword) we check if user account was locked by our too many failed login attempts check. If so, we send appropriate “account locked” message and unlock the account (resetting the flag). If not, we just send the standard verification code message.
 
 Unfortunatelly we can’t just not send any e-mail when password reset happens. What is more, even though we do not need the password reset verification code in our customized account locked e-mail, we still need to include it as Cognito checks if out message template contains it (required).
+
+
+https://devops.stackexchange.com/questions/14430/notify-users-on-failed-aws-cognito-login-and-block-on-multiple-failed-login
