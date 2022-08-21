@@ -151,8 +151,66 @@ https://www.npmtrends.com/axios-vs-got-vs-jquery-vs-request-vs-superagent -->
 
 Axios is a probably the most popular external library for sending HTTP requests. It's havily inspired by AngularJS internal library for HTTP requests. If you ever used old AngularJS's `$http` service you should feel right at home as the API is basically identical. Axios also has all the more advanced goodies like interceptors and transformers. But let's look at a basic example first.
 
-<!-- TODO: add basic Axios example and explain -->
-https://axios-http.com/docs/example 
+We'll reuse our example of the POST request that sends user's email and password to the `https://example.com/login` endpoint.
+
+```javascript
+try {
+  const response = await axios.post("https://example.com/login", {
+    email: "goku@capsule.corp",
+    password: "kamehameha"
+  });
+
+  // get the auth token
+  const { data: { token } } = reponse;
+} catch(err) {
+  if (err.response) {
+    // the server responded with a status code outside the 2xx range
+    // handle HTTP errors
+    console.log(`HTTP error: ${err.response.status}`);
+  } else if (err.request) {
+    // the request was made but no response was received
+    // handle network errors
+    console.log(err.request);
+  } else {
+    // request not sent, most likely a configuration or coding error
+    console.log('Error', err.message);
+    // best to re-throw such errors and crash
+    throw new Error(err);
+  }
+}
+```
+
+`axios.post()` returns a promise that resolves to the [Response object instance](https://axios-http.com/docs/res_schema). The contents of the HTTP response's body is available in the `data` property. It's already JSON parsed so we can use read out `token` value directly from the `response.data` property.
+
+The `axios.post(url, data)` method is a convenient shortcut for:
+
+```javascript
+axios({
+  method: 'post',
+  url,
+  data,
+});
+```
+
+The object we pass into to `axios()` function is called the Request Config. You can find all the request configuration options in the [Axios Docs](https://axios-http.com/docs/req_config).
+
+#### Error handling 
+If there was an error Axios with return a rejected promise so we can use `.catch()` callback or `await` with try/catch block to handle errors.
+
+By default the response promise will be rejected if HTTP status code is not between 200 and 299. This behavior can be altered using the `validateStatus` request config option.
+
+<!-- TODO: rewrite -->
+```javascript
+axios.get('/user/12345', {
+  validateStatus: function (status) {
+    return status < 500; // Resolve only if the status code is less than 500
+  }
+})
+```
+
+
+#### Interceptors
+
 
 <!-- TODO: add Axios example with interceptors and explain -->
 https://axios-http.com/docs/interceptors
