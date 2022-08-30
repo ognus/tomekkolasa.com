@@ -4,6 +4,8 @@ title: How to make HTTP requests in JavaScript
 
 In this post we will go through most of the ways you can send HTTP requests from the JavaScript code, both in the browser and the NodeJS runtime. We'll have a deeper look at each one of them, where I'll explain the code examples and discuss the pros and cons of the solution.
 
+We'll use a similar POST request example with basic error handling so you can compare the different ways. I will also try to show examples of some of the unique things about these ways.
+
 ## Using pure JavaScript
 
 JS nativelly supports two ways to send HTTP requests.
@@ -180,9 +182,9 @@ try {
 }
 ```
 
-`axios.post()` returns a promise that resolves to the [Response object instance](https://axios-http.com/docs/res_schema). The contents of the HTTP response's body is available in the `data` property. It's already JSON parsed so we can use read out `token` value directly from the `response.data` property.
+The example used `axios.post()` to send a POST request to `/login` endpoint. The `axios.post()` method returns a promise that resolves to the [Response object instance](https://axios-http.com/docs/res_schema). When the promise resolves the contents of the HTTP response's body is available for us in the `respone.data` property. It's already JSON parsed so we can use read out `token` value directly from it.
 
-The `axios.post(url, data)` method is a convenient shortcut for:
+The `axios.post(url, data)` method is actually just a convenient shortcut for:
 
 ```javascript
 axios({
@@ -192,7 +194,7 @@ axios({
 });
 ```
 
-The object we pass into to `axios()` function is called the Request Config. You can find all the request configuration options in the [Axios Docs](https://axios-http.com/docs/req_config).
+The object we pass into to `axios()` function is called the Request Config. You can find all the request configuration options in the [Axios Docs](https://axios-http.com/docs/req_config). 
 
 #### Error handling 
 If there was an error Axios with return a rejected promise so we can use `.catch()` callback or `await` with try/catch block to handle errors.
@@ -211,6 +213,47 @@ axios.get('/user/12345', {
 
 #### Interceptors
 
+Interceptors in Axios are custom functions that will run before request is sent and after the response is received. They are convenient to add a custom logic to Axios instance that modifies request config or handles response. Common use examples include logging, complex error handling and authentication.
+
+I like interceptors but to be honest I usually like to provide an abstraction over how my app accesses data. A simple case would be a custom class Api to uses Axios (or sth) else to make HTTP requests without exposing the fact that the Axios is used to other parts of the application. 
+
+We'll look at an example of API authentication handling logic and use Axios interceptors to implement it. We will use 2 types of interceptors. A request interceptor to to read a JWT access token from local storage if it's not already available and a response interceptor to fetch a new access token if the current one expired.
+
+```javascript
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://example.com/api",
+});
+
+api.interceptors.response.use(
+  // do nothing for successful (2xx) responses, just pass it through
+  (response) => response,
+  // intercept unsuccessful (>300) responses
+  async (error) => {
+    const { config } = error;
+
+    // refresh token when HTTP 401 and the request hasn't been retried yet
+    if (error.response?.status === 401 && !config._retry) {
+      const accessToken = await refreshToken();
+
+      if (accessToken) {
+        const authHeader = `Bearer ${accessToken}`;
+        // set default autorization header so the new access token can be used by other Axios requests
+        api.defaults.headers.common.authorization = authHeader;
+        // set custom flag to avoid infinite loop if retry also fails with 401
+        config._retry = true;
+        // retry the request with new access token
+        config.headers.authorization = authHeader;
+        return axios(config);
+      }
+    }
+
+    // reject for other errors, failed retry, or missing accessToken
+    return Promise.reject(error);
+  }
+);
+```
 
 <!-- TODO: add Axios example with interceptors and explain -->
 https://axios-http.com/docs/interceptors
@@ -236,6 +279,40 @@ const { token } = await ky
   .post("https://example.com/login", { json: data })
   .json();
 ```
+
+Similar to Axios interceptors Ky provides a concept of hooks where we can add common custom logic to alter requests, handle errors etc. Combined with Ky's automatic request retry functionality we can re-implement our token refresh Axios example very easily:
+
+```javascript
+import ky from 'ky';
+
+const api = ky.create({
+  prefixUrl: "https://example.com/api",
+  retry: {
+		limit: 1,
+		methods: ['get', 'post'],
+		statusCodes: [401]
+	},
+	hooks: {
+    beforeRequest: [
+      (request) => {
+        const token = localStorage.getItem("accessToken");
+        request.headers.set('Authorization', `token ${token}`);
+      }
+    ],
+		beforeRetry: [
+			async ({request, options, error, retryCount}) => {
+				const token = await ky('https://example.com/refresh-token');
+        localStorage.setItem("accessToken", token);
+			}
+		],
+	}
+});
+
+
+
+```
+
+Ky will retry the request if it has received a HTTP 401 response from the server. In the `beforeRetry` hook we refresh the access token and pass it in the `authorization` header.
 
 ### jQuery
 
