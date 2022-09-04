@@ -68,6 +68,8 @@ However, because bloking calls in a single-threaded language like JavaScript are
 
 XMLHttpRequest is not the most pleasant to work with so you might not see it too often in the wild. Over the years, many external libraries provided easier to use wrappers around the XMLHttpRequest object, for example `jQuery.post()` or `axios.post()`.
 
+<!-- Mention on tracking request progress via onprogres and how to cancel the request -->
+
 ### Fetch API
 
 Fortunatelly, nowadays we can use the Fetch API. It is a replacement for the XMLHttpRequest object and was initially supported by Chrome and Firefox browsers as early as 2015. It's a modern API that relies on promises instead of callbacks and it's much nicer to use. Since around 2017 it has been widely adopted across all modern browsers.
@@ -94,6 +96,11 @@ try {
   // handle network errors and JSON parsing error
   console.log(err);
 }
+```
+
+```javascript
+const request = new Request('https://example.com', {method: 'POST', body: '{"foo": "bar"}'});
+await fetch(request);
 ```
 
 Similarly to the XMLHttpRequest example we convert our data to JSON string using `JSON.stringify()`. We just don't need to use `JSON.parse()` ourselves as this is already handled by the `response.json()` from the Fetch API. What's best about Fetch API however when compared to XMLHttpRequest is that it supports promises. Why this is great? Imagine you'd want to wrap this request sending code into a reusable function, let's say `login(email, password)`:
@@ -124,6 +131,12 @@ try {
 Pretty slick code if you ask me. With `xhr.onload` you'd need to wrap the token response in a promise yourself or use a callback. Using Fetch API we can already use the token value in a synchronous fashion by leveraging the modern async/await syntax. It also allows us to handle errors in a synchronous way.
 
 Is there a reason to use XMLHttpRequest API today? I would say, generally no. Fetch API is much easier to use and is equally powerful. Unless you need to support old browsers like IE11, but even then you can use fetch polyfill (TODO: add some link) or an external library like axios.
+
+<!-- Mention that it's not east to track progress using Fetch, hope here:? https://github.com/whatwg/fetch/issues/607 -->
+
+Fetch API integrates well with modern web workers browser APIs especially related to offline experience like Service Workers API and Cache API. Even though XMLHttpRequest can be used in Web Workers, it's not aviailable in Service Workers API. Usage of the Cache API is also easier with fetch, as you can pass Request objects directly to the Cache.
+
+<!-- about multipart/form-data and FormData -->
 
 ## Using popular HTTP request libraries for JavaScript
 
@@ -253,10 +266,25 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// call secured API endpoint
+const userProfile = await api.get("/me");
 ```
 
-<!-- TODO: add Axios example with interceptors and explain -->
-https://axios-http.com/docs/interceptors
+`refreshToken()` details are beyond the scope of this article but conceptually it works like this:
+```javascript 
+async function refreshToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
+  const accessToken = await axios.post("https://example.com/api/refresh-token", {
+    refreshToken,
+  });
+  return accessToken;
+}
+```
+
+<!-- If you want to learn more about how to authenticate with an secured API and propertly handle refresh tokens check my post on Using Axios to call an external API secured by Auth0 -->
+
+<!-- Mention progress tracking via onUploadProgress and onDownloadProgress -->
 
 Axios comes with 5.6 extra kilobytes, so if you'd like something more lightweight check out [Redaxios](https://github.com/developit/redaxios). It is a leaner version of Axios by [Jason Miller](https://github.com/developit) - the author of Preactjs. Redaxios strives to offer most of the Axios functionality but will much smaller size (around 1 kB), partly thanks to use the native Fetch API. Not all core Axios features are implemented yet however, most notably the interceptors (see the [Github issue](https://github.com/developit/redaxios/issues/9) for details).
 
@@ -301,7 +329,7 @@ const api = ky.create({
     ],
 		beforeRetry: [
 			async ({request, options, error, retryCount}) => {
-				const token = await ky('https://example.com/refresh-token');
+				const token = await ky("https://example.com/api/refresh-token");
         localStorage.setItem("accessToken", token);
 			}
 		],
